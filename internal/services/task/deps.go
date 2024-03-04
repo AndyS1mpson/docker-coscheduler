@@ -16,6 +16,7 @@ type dockerClient interface {
 	PauseContainer(ctx context.Context, containerID string) error
 	UnpauseContainer(ctx context.Context, containerID string) error
 	StopContainer(ctx context.Context, containerID string) error
+	UpdateContainer(ctx context.Context, containerID string, cpuSet models.CPUSet) error
 }
 
 type unpacker interface {
