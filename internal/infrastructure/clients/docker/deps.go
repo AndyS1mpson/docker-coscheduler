@@ -38,4 +38,5 @@ type containerAPI interface {
 	ContainerStart(ctx context.Context, containerID string, options container.StartOptions) error
 	ContainerPause(ctx context.Context, containerID string) error
 	ContainerUnpause(ctx context.Context, containerID string) error
+	ContainerStop(ctx context.Context, containerID string, options container.StopOptions) error
 }

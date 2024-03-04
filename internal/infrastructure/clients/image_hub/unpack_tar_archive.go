@@ -13,7 +13,7 @@ import (
 // UnpackTarArchive разархивирует архив и возвращает путь до папки с ним
 func (c *Client) UnpackTarArchive(archiveFile models.ImageArchive, dirName string) (string, error) {
 	if archiveFile.File == nil {
-		return "", models.EmptyArchiveError
+		return "", models.ErrEmptyArchive
 	}
 
 	tarReader := tar.NewReader(archiveFile.File)
@@ -25,6 +25,7 @@ func (c *Client) UnpackTarArchive(archiveFile models.ImageArchive, dirName strin
 		if err == io.EOF {
 			break // End of tar archive
 		}
+
 		if err != nil {
 			return "", err
 		}

@@ -33,6 +33,9 @@ func (c *Client) BuildImage(ctx context.Context, dirName string) (string, error)
 	defer res.Body.Close()
 
 	imageInspect, err := c.externalClient.InspectImage(targetPath)
+	if err != nil {
+		return "", fmt.Errorf("inspect image: %w", err)
+	}
 
 	return imageInspect.ID, nil
 }

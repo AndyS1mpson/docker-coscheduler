@@ -17,6 +17,7 @@ type CPUSet struct {
 func NewCPUSet(str string) (*CPUSet, error) {
 	re := regexp.MustCompile(`(\d+)-(\d+)`)
 	matches := re.FindStringSubmatch(str)
+
 	if len(matches) != 3 {
 		return &CPUSet{}, errors.New("can not match params")
 	}

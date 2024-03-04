@@ -48,6 +48,7 @@ func serviceName() ServiceName {
 
 	more := true
 	callerFrame := runtime.Frame{}
+
 	for more {
 		callerFrame, more = callerFrames.Next()
 		name := callerFrame.Function

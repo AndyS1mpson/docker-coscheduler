@@ -21,12 +21,12 @@ var (
 // ArchiveImageToTar создает tar архив образа Docker
 func (c *Client) ArchiveImageToTar(imageDir string, tarName string) (*models.ImageArchive, error) {
 	if !isDockerfileExist(imageDir) {
-		return nil, models.DockerfileNotExistError
+		return nil, models.ErrDockerfileNotExist
 	}
 
 	tarFile, err := createTarArchive(imageDir, tarName)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create tar archive: %w", err)
+		return nil, fmt.Errorf("create tar archive: %w", err)
 	}
 
 	return &models.ImageArchive{File: tarFile}, nil
@@ -42,6 +42,7 @@ func isDockerfileExist(imageDir string) bool {
 // createTarArchive создает tar архив
 func createTarArchive(imageDir string, tarName string) (*os.File, error) {
 	tarPath := filepath.Join(tarArchivesDir, tarName+tarExtension)
+
 	tarFile, err := os.Create(tarPath)
 	if err != nil {
 		return nil, err

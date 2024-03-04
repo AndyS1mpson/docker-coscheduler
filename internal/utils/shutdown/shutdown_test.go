@@ -23,6 +23,7 @@ func TestWithContext(t *testing.T) {
 	}()
 
 	<-ctx.Done()
+
 	if !errors.Is(ctx.Err(), context.Canceled) {
 		t.Errorf("excepted canceled, actual: %v", ctx.Err())
 	}
