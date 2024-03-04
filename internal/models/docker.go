@@ -22,6 +22,7 @@ type ContainerState string
 
 // ContainerInfo информация о контейнере
 type ContainerInfo struct {
-	ID    string         // Идентификатор контейнера
-	State ContainerState // Состояние контейнера
+	ID       string         // Идентификатор контейнера
+	State    ContainerState // Состояние контейнера
+	ExitCode int64          // Статус код контейнера
 }

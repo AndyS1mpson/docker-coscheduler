@@ -15,7 +15,8 @@ func (c *Client) GetContainerInfo(ctx context.Context, containerID string) (*mod
 	}
 
 	return &models.ContainerInfo{
-		ID: containerID,
-		State: models.ContainerState(result.State.Status),
+		ID:       containerID,
+		State:    models.ContainerState(result.State.Status),
+		ExitCode: int64(result.State.ExitCode),
 	}, nil
 }

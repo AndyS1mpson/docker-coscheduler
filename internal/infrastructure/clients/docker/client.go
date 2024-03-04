@@ -4,13 +4,15 @@ import "context"
 
 // Client клиент для работы с Docker Engine API
 type Client struct {
-	externalClient externalClient
+	externalClient    externalClient
+	workerImageHubDir string
 }
 
 // NewClient конструктор для Client
-func NewClient(client externalClient) (*Client, error) {
+func NewClient(client externalClient, config Config) (*Client, error) {
 	return &Client{
-		externalClient: client,
+		externalClient:    client,
+		workerImageHubDir: config.WorkerImageHubDir,
 	}, nil
 }
 

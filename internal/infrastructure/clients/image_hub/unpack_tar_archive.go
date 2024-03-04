@@ -6,10 +6,19 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+
+	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 )
 
-func UnpackTarArchive(archiveFile *os.File, targetDir string) error {
-	tarReader := tar.NewReader(archiveFile)
+// UnpackTarArchive разархивирует архив и возвращает путь до папки с ним
+func (c *Client) UnpackTarArchive(archiveFile models.ImageArchive, dirName string) (string, error) {
+	if archiveFile.File == nil {
+		return "", models.EmptyArchiveError
+	}
+
+	tarReader := tar.NewReader(archiveFile.File)
+
+	targetPath := filepath.Join(c.workerImageHubDir, dirName)
 
 	for {
 		header, err := tarReader.Next()
@@ -17,30 +26,28 @@ func UnpackTarArchive(archiveFile *os.File, targetDir string) error {
 			break // End of tar archive
 		}
 		if err != nil {
-			return err
+			return "", err
 		}
-
-		targetPath := filepath.Join(targetDir, header.Name)
 
 		switch header.Typeflag {
 		case tar.TypeDir:
 			if err := os.MkdirAll(targetPath, 0755); err != nil {
-				return err
+				return "", err
 			}
 		case tar.TypeReg:
 			file, err := os.OpenFile(targetPath, os.O_CREATE|os.O_WRONLY, os.FileMode(header.Mode))
 			if err != nil {
-				return err
+				return "", err
 			}
 			defer file.Close()
 
 			if _, err := io.Copy(file, tarReader); err != nil {
-				return err
+				return "", err
 			}
 		default:
 			fmt.Printf("Unsupported type: %v in %s\n", header.Typeflag, targetPath)
 		}
 	}
 
-	return nil
+	return targetPath, nil
 }

@@ -19,7 +19,7 @@ var (
 )
 
 // ArchiveImageToTar создает tar архив образа Docker
-func ArchiveImageToTar(imageDir string, tarName string) (*models.ImageArchive, error) {
+func (c *Client) ArchiveImageToTar(imageDir string, tarName string) (*models.ImageArchive, error) {
 	if !isDockerfileExist(imageDir) {
 		return nil, models.DockerfileNotExistError
 	}
