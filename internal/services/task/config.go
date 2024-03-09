@@ -1,8 +1,8 @@
 package task
 
-// NodeConfig конфигурация воркера
-type NodeConfig struct {
+// Config конфигурация воркера
+type Config struct {
 	CPUNums int64  // Колисество ядер на ноде
-	URI     string // URI ноды
-	Port    int64  // Порт ноды
+	URI     string `envconfig:"SERVICE_HOST" required:"true"` // URI ноды
+	Port    int64  `envconfig:"SERVICE_PORT" required:"true"` // Порт ноды
 }

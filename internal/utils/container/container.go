@@ -38,6 +38,11 @@ func (c *Container) Ctx() context.Context {
 	return c.appCtx
 }
 
+// PushShutdown добавить функцию завершения в стек
+func (c *Container) PushShutdown(f func()) {
+	c.shutdown.Push(f)
+}
+
 func (c *Container) gracefulShutdown(ctxCancel func()) func() {
 	return func() {
 		for !c.shutdown.IsEmpty() {

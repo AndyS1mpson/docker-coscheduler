@@ -10,20 +10,20 @@ import (
 type Service struct {
 	dockerClient dockerClient
 	unpacker     unpacker
-	config       NodeConfig
+	config       Config
 }
 
 // NewService конструктор для Service
-func NewService(dockerClient dockerClient, uunpacker unpacker, config NodeConfig) *Service {
+func NewService(dockerClient dockerClient, unpacker unpacker, config Config) *Service {
 	return &Service{
 		dockerClient: dockerClient,
-		unpacker:     uunpacker,
+		unpacker:     unpacker,
 		config:       config,
 	}
 }
 
 // GetNodeInfo получение информации о ноде на которой работает воркер
-func (s *Service) GetNodeInfo(ctx context.Context) NodeConfig {
+func (s *Service) GetNodeInfo(ctx context.Context) Config {
 	return s.config
 }
 

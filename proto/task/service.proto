@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package task;
+
+option go_package = "AndyS1mpson/docker-coscheduler/pkg/task";
+
+import "google/protobuf/empty.proto";
+
+service Task {
+    rpc GetNodeInfo(google.protobuf.Empty) returns (GetNodeInfoResponse) {}
+}
+
+message GetNodeInfoResponse {
+    int64 cpuNums = 1;
+    string uri = 2;
+    int64 port = 3;
+}

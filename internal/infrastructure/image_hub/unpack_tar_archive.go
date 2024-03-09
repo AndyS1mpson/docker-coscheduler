@@ -11,14 +11,14 @@ import (
 )
 
 // UnpackTarArchive разархивирует архив и возвращает путь до папки с ним
-func (c *Client) UnpackTarArchive(archiveFile models.ImageArchive, dirName string) (string, error) {
+func (h *Hub) UnpackTarArchive(archiveFile models.ImageArchive, dirName string) (string, error) {
 	if archiveFile.File == nil {
 		return "", models.ErrEmptyArchive
 	}
 
 	tarReader := tar.NewReader(archiveFile.File)
 
-	targetPath := filepath.Join(c.workerImageHubDir, dirName)
+	targetPath := filepath.Join(h.workerImageHubDir, dirName)
 
 	for {
 		header, err := tarReader.Next()

@@ -32,10 +32,18 @@ func (c *Client) BuildImage(ctx context.Context, dirName string) (string, error)
 	}
 	defer res.Body.Close()
 
-	imageInspect, err := c.externalClient.InspectImage(targetPath)
+	images, err := c.externalClient.ImageList(ctx, types.ImageListOptions{})
 	if err != nil {
 		return "", fmt.Errorf("inspect image: %w", err)
 	}
 
-	return imageInspect.ID, nil
+	for _, image := range images {
+		for _, tag := range image.RepoTags {
+			if tag == targetPath {
+				return image.ID, nil
+			}
+		}
+	}
+
+	return "", fmt.Errorf("image with tag %s not found", targetPath)
 }
