@@ -1,14 +1,3 @@
-CURDIR=$(shell pwd)
-
-lint:
-	golangci-lint run
-
-install-linters:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-
-precommit:
-	make precommit
-
 # Cекция настройки gRPC
 install-grpc-deps:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
@@ -60,3 +49,19 @@ generate_proto:
 
 
 generate: install-grpc-deps vendor-proto/google/api vendor-proto/google/protobuf vendor-proto/validate generate_proto
+
+# Команды для работы с проектом
+lint:
+	golangci-lint run
+
+install-linters:
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+precommit:
+	make precommit
+
+run-worker:
+	go run cmd/worker/main.go
+
+test:
+	go test -v ./...

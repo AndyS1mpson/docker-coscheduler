@@ -23,6 +23,7 @@ const (
 	dotEnvFileName = ".env"
 )
 
+// Load загружает данные из .env файла
 func Load() {
 	if err := readFile(dotEnvFileName); err != nil {
 		switch {
