@@ -12,17 +12,29 @@ excludeFiles:
 components:
   models:
     in: models/**
-  services:
-    in: services/**
-  container:
-    in: container
-  controllers:
-    in: controllers/**
-  infrastructure:
-    in: infrastructure/**
-  clients:
-    in:
-      - infrastructure/clients/**
+
+  worker_services:
+    in: worker/services/**
+  worker_container:
+    in: worker/container
+  worker_controllers:
+    in: worker/controllers/**
+  worker_infrastructure:
+    in: worker/infrastructure/**
+  worker_clients:
+    in: worker/infrastructure/clients/**
+
+  scheduler_services:
+    in: scheduler/services/**
+  scheduler_container:
+    in: scheduler/container
+  scheduler_controllers:
+    in: scheduler/controllers/**
+  scheduler_infrastructure:
+    in: scheduler/infrastructure/**
+  scheduler_clients:
+    in: scheduler/infrastructure/clients/**
+
   utils:
     in:
       - utils/**
@@ -35,18 +47,34 @@ deps:
   container:
     anyProjectDeps: true
 
-  controllers:
+  worker_controllers:
     mayDependOn:
-      - services
+      - worker_services
 
-  services:
+  worker_services:
     mayDependOn:
-      - services
+      - worker_services
 
-  infrastructure:
+  worker_infrastructure:
     mayDependOn:
-      - services
+      - worker_services
 
-  clients:
+  worker_clients:
     mayDependOn:
-      - services
+      - worker_services
+
+  scheduler_controllers:
+    mayDependOn:
+      - scheduler_services
+
+  scheduler_services:
+    mayDependOn:
+      - scheduler_services
+
+  scheduler_infrastructure:
+    mayDependOn:
+      - scheduler_services
+
+  scheduler_clients:
+    mayDependOn:
+      - scheduler_services

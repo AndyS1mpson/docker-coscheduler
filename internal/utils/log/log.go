@@ -34,6 +34,6 @@ func Error(err error, data Data) {
 }
 
 // Println выводит сообщение в поток вывода
-func Println(err error, data Data) {
-	global.WithFields(logrus.Fields(data)).Println(err)
+func Println(msg any, data Data) {
+	global.WithFields(logrus.Fields(data)).Println(msg)
 }

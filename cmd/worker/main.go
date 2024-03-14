@@ -9,10 +9,10 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/AndyS1mpson/docker-coscheduler/generated/task"
-	"github.com/AndyS1mpson/docker-coscheduler/internal/container"
-	"github.com/AndyS1mpson/docker-coscheduler/internal/controllers"
-	"github.com/AndyS1mpson/docker-coscheduler/internal/infrastructure/middleware"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/log"
+	"github.com/AndyS1mpson/docker-coscheduler/internal/worker/container"
+	"github.com/AndyS1mpson/docker-coscheduler/internal/worker/controllers"
+	"github.com/AndyS1mpson/docker-coscheduler/internal/worker/infrastructure/middleware"
 )
 
 const (
@@ -27,7 +27,14 @@ func main() {
 func run() (exitCode int) {
 	var err error
 
-	container, shutdown := container.NewContainer()
+	config, err := container.NewConfig()
+	if err != nil {
+		log.Error(fmt.Errorf("read config: %w", err), log.Data{})
+
+		return failExitCode
+	}
+
+	container, shutdown := container.NewContainer(*config)
 
 	defer func() {
 		if panicErr := recover(); panicErr != nil {
@@ -42,7 +49,7 @@ func run() (exitCode int) {
 	defer shutdown()
 
 	// Create TCP connection
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", container.GetConfigs().NodeConfig.Port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", container.GetConfigs().Node.Port))
 	if err != nil {
 		log.Error(fmt.Errorf("failed to listen: %w", err), log.Data{})
 

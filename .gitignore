@@ -23,4 +23,5 @@ go.work
 **/.DS_Store
 /vendor-proto
 /.vscode
-.env
+scheduler.yaml
+worker.yaml

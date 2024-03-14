@@ -5,13 +5,32 @@ package task;
 option go_package = "AndyS1mpson/docker-coscheduler/pkg/task";
 
 import "google/protobuf/empty.proto";
+import "validate/validate.proto";
 
 service Task {
     rpc GetNodeInfo(google.protobuf.Empty) returns (GetNodeInfoResponse) {}
+    rpc Build(BuildRequest) returns (BuildResponse) {}
 }
 
 message GetNodeInfoResponse {
-    int64 cpuNums = 1;
-    string uri = 2;
-    int64 port = 3;
+    int64   cpuNums = 1;
+    string  uri     = 2;
+    int64   port    = 3;
+}
+
+message BuildRequest {
+    string  taskTitle    = 1 [(validate.rules).string.min_len = 1];
+    bytes   imageArchive = 2 [(validate.rules).bytes.min_len = 3];
+}
+
+message BuildResponse {
+    string  taskId  = 1;
+    string  imageId = 2;
+    Node    node    = 3;
+    string  status  = 4;
+}
+
+message Node {
+    string  host = 1;
+    int64   port = 2;
 }

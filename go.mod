@@ -4,13 +4,14 @@ go 1.22
 
 require (
 	github.com/docker/docker v25.0.3+incompatible
+	github.com/envoyproxy/protoc-gen-validate v1.0.2
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
-	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/opencontainers/image-spec v1.1.0
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/grpc v1.58.3
 	google.golang.org/protobuf v1.31.0
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (

@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	Task_GetNodeInfo_FullMethodName = "/task.Task/GetNodeInfo"
+	Task_Build_FullMethodName       = "/task.Task/Build"
 )
 
 // TaskClient is the client API for Task service.
@@ -28,6 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaskClient interface {
 	GetNodeInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
+	Build(ctx context.Context, in *BuildRequest, opts ...grpc.CallOption) (*BuildResponse, error)
 }
 
 type taskClient struct {
@@ -47,11 +49,21 @@ func (c *taskClient) GetNodeInfo(ctx context.Context, in *emptypb.Empty, opts ..
 	return out, nil
 }
 
+func (c *taskClient) Build(ctx context.Context, in *BuildRequest, opts ...grpc.CallOption) (*BuildResponse, error) {
+	out := new(BuildResponse)
+	err := c.cc.Invoke(ctx, Task_Build_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility
 type TaskServer interface {
 	GetNodeInfo(context.Context, *emptypb.Empty) (*GetNodeInfoResponse, error)
+	Build(context.Context, *BuildRequest) (*BuildResponse, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -61,6 +73,9 @@ type UnimplementedTaskServer struct {
 
 func (UnimplementedTaskServer) GetNodeInfo(context.Context, *emptypb.Empty) (*GetNodeInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNodeInfo not implemented")
+}
+func (UnimplementedTaskServer) Build(context.Context, *BuildRequest) (*BuildResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Build not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -93,6 +108,24 @@ func _Task_GetNodeInfo_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_Build_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BuildRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).Build(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_Build_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).Build(ctx, req.(*BuildRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -103,6 +136,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNodeInfo",
 			Handler:    _Task_GetNodeInfo_Handler,
+		},
+		{
+			MethodName: "Build",
+			Handler:    _Task_Build_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

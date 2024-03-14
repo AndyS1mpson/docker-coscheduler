@@ -1,0 +1,4 @@
+image_hub: "data"
+node:
+  host: "localhost"
+  port: 8005

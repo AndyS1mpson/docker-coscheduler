@@ -142,3 +142,361 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetNodeInfoResponseValidationError{}
+
+// Validate checks the field values on BuildRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *BuildRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BuildRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in BuildRequestMultiError, or
+// nil if none found.
+func (m *BuildRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BuildRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetTaskTitle()) < 1 {
+		err := BuildRequestValidationError{
+			field:  "TaskTitle",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetImageArchive()) < 3 {
+		err := BuildRequestValidationError{
+			field:  "ImageArchive",
+			reason: "value length must be at least 3 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return BuildRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// BuildRequestMultiError is an error wrapping multiple validation errors
+// returned by BuildRequest.ValidateAll() if the designated constraints aren't met.
+type BuildRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BuildRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BuildRequestMultiError) AllErrors() []error { return m }
+
+// BuildRequestValidationError is the validation error returned by
+// BuildRequest.Validate if the designated constraints aren't met.
+type BuildRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BuildRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BuildRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BuildRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BuildRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BuildRequestValidationError) ErrorName() string { return "BuildRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e BuildRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBuildRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BuildRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BuildRequestValidationError{}
+
+// Validate checks the field values on BuildResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *BuildResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BuildResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in BuildResponseMultiError, or
+// nil if none found.
+func (m *BuildResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BuildResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TaskId
+
+	// no validation rules for ImageId
+
+	if all {
+		switch v := interface{}(m.GetNode()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, BuildResponseValidationError{
+					field:  "Node",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, BuildResponseValidationError{
+					field:  "Node",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetNode()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return BuildResponseValidationError{
+				field:  "Node",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Status
+
+	if len(errors) > 0 {
+		return BuildResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// BuildResponseMultiError is an error wrapping multiple validation errors
+// returned by BuildResponse.ValidateAll() if the designated constraints
+// aren't met.
+type BuildResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BuildResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BuildResponseMultiError) AllErrors() []error { return m }
+
+// BuildResponseValidationError is the validation error returned by
+// BuildResponse.Validate if the designated constraints aren't met.
+type BuildResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BuildResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BuildResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BuildResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BuildResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BuildResponseValidationError) ErrorName() string { return "BuildResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e BuildResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBuildResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BuildResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BuildResponseValidationError{}
+
+// Validate checks the field values on Node with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Node) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Node with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in NodeMultiError, or nil if none found.
+func (m *Node) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Node) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Host
+
+	// no validation rules for Port
+
+	if len(errors) > 0 {
+		return NodeMultiError(errors)
+	}
+
+	return nil
+}
+
+// NodeMultiError is an error wrapping multiple validation errors returned by
+// Node.ValidateAll() if the designated constraints aren't met.
+type NodeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NodeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NodeMultiError) AllErrors() []error { return m }
+
+// NodeValidationError is the validation error returned by Node.Validate if the
+// designated constraints aren't met.
+type NodeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NodeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NodeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NodeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NodeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NodeValidationError) ErrorName() string { return "NodeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e NodeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNode.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NodeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NodeValidationError{}
