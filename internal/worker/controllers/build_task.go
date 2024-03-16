@@ -8,7 +8,8 @@ import (
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 )
 
-func (s *Server) Build(ctx context.Context, req *task.BuildRequest) (*task.BuildResponse, error) {
+// BuildTask обработчик создания образа для задачи 
+func (s *Server) BuildTask(ctx context.Context, req *task.BuildTaskRequest) (*task.BuildTaskResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		return nil, err
@@ -19,7 +20,7 @@ func (s *Server) Build(ctx context.Context, req *task.BuildRequest) (*task.Build
 		return nil, fmt.Errorf("build task: %w", err)
 	}
 
-	return &task.BuildResponse{
+	return &task.BuildTaskResponse{
 		TaskId:  t.ID,
 		ImageId: t.ImageID,
 		Node: &task.Node{

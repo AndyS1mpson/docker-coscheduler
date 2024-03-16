@@ -35,6 +35,210 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on Node with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Node) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Node with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in NodeMultiError, or nil if none found.
+func (m *Node) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Node) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Host
+
+	// no validation rules for Port
+
+	if len(errors) > 0 {
+		return NodeMultiError(errors)
+	}
+
+	return nil
+}
+
+// NodeMultiError is an error wrapping multiple validation errors returned by
+// Node.ValidateAll() if the designated constraints aren't met.
+type NodeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m NodeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m NodeMultiError) AllErrors() []error { return m }
+
+// NodeValidationError is the validation error returned by Node.Validate if the
+// designated constraints aren't met.
+type NodeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e NodeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e NodeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e NodeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e NodeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e NodeValidationError) ErrorName() string { return "NodeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e NodeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sNode.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = NodeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = NodeValidationError{}
+
+// Validate checks the field values on CPUsOpt with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CPUsOpt) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CPUsOpt with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in CPUsOptMultiError, or nil if none found.
+func (m *CPUsOpt) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CPUsOpt) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for From
+
+	// no validation rules for Count
+
+	if len(errors) > 0 {
+		return CPUsOptMultiError(errors)
+	}
+
+	return nil
+}
+
+// CPUsOptMultiError is an error wrapping multiple validation errors returned
+// by CPUsOpt.ValidateAll() if the designated constraints aren't met.
+type CPUsOptMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CPUsOptMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CPUsOptMultiError) AllErrors() []error { return m }
+
+// CPUsOptValidationError is the validation error returned by CPUsOpt.Validate
+// if the designated constraints aren't met.
+type CPUsOptValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CPUsOptValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CPUsOptValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CPUsOptValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CPUsOptValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CPUsOptValidationError) ErrorName() string { return "CPUsOptValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CPUsOptValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCPUsOpt.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CPUsOptValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CPUsOptValidationError{}
+
 // Validate checks the field values on GetNodeInfoResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -143,22 +347,22 @@ var _ interface {
 	ErrorName() string
 } = GetNodeInfoResponseValidationError{}
 
-// Validate checks the field values on BuildRequest with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *BuildRequest) Validate() error {
+// Validate checks the field values on BuildTaskRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *BuildTaskRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on BuildRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in BuildRequestMultiError, or
-// nil if none found.
-func (m *BuildRequest) ValidateAll() error {
+// ValidateAll checks the field values on BuildTaskRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BuildTaskRequestMultiError, or nil if none found.
+func (m *BuildTaskRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *BuildRequest) validate(all bool) error {
+func (m *BuildTaskRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -166,7 +370,7 @@ func (m *BuildRequest) validate(all bool) error {
 	var errors []error
 
 	if utf8.RuneCountInString(m.GetTaskTitle()) < 1 {
-		err := BuildRequestValidationError{
+		err := BuildTaskRequestValidationError{
 			field:  "TaskTitle",
 			reason: "value length must be at least 1 runes",
 		}
@@ -177,7 +381,7 @@ func (m *BuildRequest) validate(all bool) error {
 	}
 
 	if len(m.GetImageArchive()) < 3 {
-		err := BuildRequestValidationError{
+		err := BuildTaskRequestValidationError{
 			field:  "ImageArchive",
 			reason: "value length must be at least 3 bytes",
 		}
@@ -188,18 +392,19 @@ func (m *BuildRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return BuildRequestMultiError(errors)
+		return BuildTaskRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// BuildRequestMultiError is an error wrapping multiple validation errors
-// returned by BuildRequest.ValidateAll() if the designated constraints aren't met.
-type BuildRequestMultiError []error
+// BuildTaskRequestMultiError is an error wrapping multiple validation errors
+// returned by BuildTaskRequest.ValidateAll() if the designated constraints
+// aren't met.
+type BuildTaskRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m BuildRequestMultiError) Error() string {
+func (m BuildTaskRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -208,11 +413,11 @@ func (m BuildRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m BuildRequestMultiError) AllErrors() []error { return m }
+func (m BuildTaskRequestMultiError) AllErrors() []error { return m }
 
-// BuildRequestValidationError is the validation error returned by
-// BuildRequest.Validate if the designated constraints aren't met.
-type BuildRequestValidationError struct {
+// BuildTaskRequestValidationError is the validation error returned by
+// BuildTaskRequest.Validate if the designated constraints aren't met.
+type BuildTaskRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -220,22 +425,22 @@ type BuildRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e BuildRequestValidationError) Field() string { return e.field }
+func (e BuildTaskRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e BuildRequestValidationError) Reason() string { return e.reason }
+func (e BuildTaskRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e BuildRequestValidationError) Cause() error { return e.cause }
+func (e BuildTaskRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e BuildRequestValidationError) Key() bool { return e.key }
+func (e BuildTaskRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e BuildRequestValidationError) ErrorName() string { return "BuildRequestValidationError" }
+func (e BuildTaskRequestValidationError) ErrorName() string { return "BuildTaskRequestValidationError" }
 
 // Error satisfies the builtin error interface
-func (e BuildRequestValidationError) Error() string {
+func (e BuildTaskRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -247,14 +452,14 @@ func (e BuildRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sBuildRequest.%s: %s%s",
+		"invalid %sBuildTaskRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = BuildRequestValidationError{}
+var _ error = BuildTaskRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -262,24 +467,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = BuildRequestValidationError{}
+} = BuildTaskRequestValidationError{}
 
-// Validate checks the field values on BuildResponse with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *BuildResponse) Validate() error {
+// Validate checks the field values on BuildTaskResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *BuildTaskResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on BuildResponse with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in BuildResponseMultiError, or
-// nil if none found.
-func (m *BuildResponse) ValidateAll() error {
+// ValidateAll checks the field values on BuildTaskResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// BuildTaskResponseMultiError, or nil if none found.
+func (m *BuildTaskResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *BuildResponse) validate(all bool) error {
+func (m *BuildTaskResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -294,7 +499,7 @@ func (m *BuildResponse) validate(all bool) error {
 		switch v := interface{}(m.GetNode()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, BuildResponseValidationError{
+				errors = append(errors, BuildTaskResponseValidationError{
 					field:  "Node",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -302,7 +507,7 @@ func (m *BuildResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, BuildResponseValidationError{
+				errors = append(errors, BuildTaskResponseValidationError{
 					field:  "Node",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -311,7 +516,7 @@ func (m *BuildResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetNode()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return BuildResponseValidationError{
+			return BuildTaskResponseValidationError{
 				field:  "Node",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -322,19 +527,19 @@ func (m *BuildResponse) validate(all bool) error {
 	// no validation rules for Status
 
 	if len(errors) > 0 {
-		return BuildResponseMultiError(errors)
+		return BuildTaskResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// BuildResponseMultiError is an error wrapping multiple validation errors
-// returned by BuildResponse.ValidateAll() if the designated constraints
+// BuildTaskResponseMultiError is an error wrapping multiple validation errors
+// returned by BuildTaskResponse.ValidateAll() if the designated constraints
 // aren't met.
-type BuildResponseMultiError []error
+type BuildTaskResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m BuildResponseMultiError) Error() string {
+func (m BuildTaskResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -343,11 +548,11 @@ func (m BuildResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m BuildResponseMultiError) AllErrors() []error { return m }
+func (m BuildTaskResponseMultiError) AllErrors() []error { return m }
 
-// BuildResponseValidationError is the validation error returned by
-// BuildResponse.Validate if the designated constraints aren't met.
-type BuildResponseValidationError struct {
+// BuildTaskResponseValidationError is the validation error returned by
+// BuildTaskResponse.Validate if the designated constraints aren't met.
+type BuildTaskResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -355,22 +560,24 @@ type BuildResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e BuildResponseValidationError) Field() string { return e.field }
+func (e BuildTaskResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e BuildResponseValidationError) Reason() string { return e.reason }
+func (e BuildTaskResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e BuildResponseValidationError) Cause() error { return e.cause }
+func (e BuildTaskResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e BuildResponseValidationError) Key() bool { return e.key }
+func (e BuildTaskResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e BuildResponseValidationError) ErrorName() string { return "BuildResponseValidationError" }
+func (e BuildTaskResponseValidationError) ErrorName() string {
+	return "BuildTaskResponseValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e BuildResponseValidationError) Error() string {
+func (e BuildTaskResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -382,14 +589,14 @@ func (e BuildResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sBuildResponse.%s: %s%s",
+		"invalid %sBuildTaskResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = BuildResponseValidationError{}
+var _ error = BuildTaskResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -397,46 +604,75 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = BuildResponseValidationError{}
+} = BuildTaskResponseValidationError{}
 
-// Validate checks the field values on Node with the rules defined in the proto
-// definition for this message. If any rules are violated, the first error
-// encountered is returned, or nil if there are no violations.
-func (m *Node) Validate() error {
+// Validate checks the field values on CreateTaskRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CreateTaskRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Node with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in NodeMultiError, or nil if none found.
-func (m *Node) ValidateAll() error {
+// ValidateAll checks the field values on CreateTaskRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateTaskRequestMultiError, or nil if none found.
+func (m *CreateTaskRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Node) validate(all bool) error {
+func (m *CreateTaskRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Host
+	// no validation rules for ImageId
 
-	// no validation rules for Port
+	if all {
+		switch v := interface{}(m.GetCpusOpt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateTaskRequestValidationError{
+					field:  "CpusOpt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateTaskRequestValidationError{
+					field:  "CpusOpt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCpusOpt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateTaskRequestValidationError{
+				field:  "CpusOpt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
-		return NodeMultiError(errors)
+		return CreateTaskRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// NodeMultiError is an error wrapping multiple validation errors returned by
-// Node.ValidateAll() if the designated constraints aren't met.
-type NodeMultiError []error
+// CreateTaskRequestMultiError is an error wrapping multiple validation errors
+// returned by CreateTaskRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CreateTaskRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m NodeMultiError) Error() string {
+func (m CreateTaskRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -445,11 +681,11 @@ func (m NodeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m NodeMultiError) AllErrors() []error { return m }
+func (m CreateTaskRequestMultiError) AllErrors() []error { return m }
 
-// NodeValidationError is the validation error returned by Node.Validate if the
-// designated constraints aren't met.
-type NodeValidationError struct {
+// CreateTaskRequestValidationError is the validation error returned by
+// CreateTaskRequest.Validate if the designated constraints aren't met.
+type CreateTaskRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -457,22 +693,24 @@ type NodeValidationError struct {
 }
 
 // Field function returns field value.
-func (e NodeValidationError) Field() string { return e.field }
+func (e CreateTaskRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e NodeValidationError) Reason() string { return e.reason }
+func (e CreateTaskRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e NodeValidationError) Cause() error { return e.cause }
+func (e CreateTaskRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e NodeValidationError) Key() bool { return e.key }
+func (e CreateTaskRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e NodeValidationError) ErrorName() string { return "NodeValidationError" }
+func (e CreateTaskRequestValidationError) ErrorName() string {
+	return "CreateTaskRequestValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e NodeValidationError) Error() string {
+func (e CreateTaskRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -484,14 +722,14 @@ func (e NodeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sNode.%s: %s%s",
+		"invalid %sCreateTaskRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = NodeValidationError{}
+var _ error = CreateTaskRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -499,4 +737,110 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = NodeValidationError{}
+} = CreateTaskRequestValidationError{}
+
+// Validate checks the field values on CreateTaskResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateTaskResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateTaskResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateTaskResponseMultiError, or nil if none found.
+func (m *CreateTaskResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateTaskResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ContainerId
+
+	// no validation rules for Status
+
+	if len(errors) > 0 {
+		return CreateTaskResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateTaskResponseMultiError is an error wrapping multiple validation errors
+// returned by CreateTaskResponse.ValidateAll() if the designated constraints
+// aren't met.
+type CreateTaskResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateTaskResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateTaskResponseMultiError) AllErrors() []error { return m }
+
+// CreateTaskResponseValidationError is the validation error returned by
+// CreateTaskResponse.Validate if the designated constraints aren't met.
+type CreateTaskResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateTaskResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateTaskResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateTaskResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateTaskResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateTaskResponseValidationError) ErrorName() string {
+	return "CreateTaskResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateTaskResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateTaskResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateTaskResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateTaskResponseValidationError{}

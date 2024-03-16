@@ -40,7 +40,7 @@ func (c *Client) BuildImage(ctx context.Context, dirName string) (string, error)
 	for _, image := range images {
 		for _, tag := range image.RepoTags {
 			if tag == fmt.Sprintf("%s:latest", dirName) {
-				return image.ID, nil
+				return image.ID[7:19], nil
 			}
 		}
 	}

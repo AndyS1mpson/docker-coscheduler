@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/container"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/log"
 )
@@ -59,7 +60,14 @@ func run() (exitCode int) {
 		return failExitCode
 	}
 
-	log.Println(imageID, log.Data{})
+	containerID, err := extClient.CreateTask(container.Ctx(), imageID, models.CPUSet{From: 1, Count: 5})
+	if err != nil {
+		log.Error(err, log.Data{})
+
+		return failExitCode
+	}
+
+	log.Println(containerID, log.Data{})
 
 	return successExitCode
 }

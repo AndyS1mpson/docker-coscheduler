@@ -8,5 +8,6 @@ import (
 )
 
 type externalClient interface {
-	Build(ctx context.Context, in *task.BuildRequest, opts ...grpc.CallOption) (*task.BuildResponse, error)
+	BuildTask(ctx context.Context, in *task.BuildTaskRequest, opts ...grpc.CallOption) (*task.BuildTaskResponse, error)
+	CreateTask(ctx context.Context, in *task.CreateTaskRequest, opts ...grpc.CallOption) (*task.CreateTaskResponse, error)
 }

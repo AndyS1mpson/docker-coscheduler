@@ -9,7 +9,7 @@ import (
 
 // CreateTask создание docker контейнера для задачи
 func (s *Service) CreateTask(ctx context.Context, task models.Task, cpuOpt models.CPUSet) (*models.Task, error) {
-	containerID, err := s.dockerClient.CreateContainer(ctx, task.ImageID, *task.Config.CPUs, task.ImageID)
+	containerID, err := s.dockerClient.CreateContainer(ctx, task.ImageID, cpuOpt, task.ImageID)
 	if err != nil {
 		return nil, fmt.Errorf("create docker container for task: %w", err)
 	}

@@ -9,7 +9,18 @@ import "validate/validate.proto";
 
 service Task {
     rpc GetNodeInfo(google.protobuf.Empty) returns (GetNodeInfoResponse) {}
-    rpc Build(BuildRequest) returns (BuildResponse) {}
+    rpc BuildTask(BuildTaskRequest) returns (BuildTaskResponse) {}
+    rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse) {}
+}
+
+message Node {
+    string  host = 1;
+    int64   port = 2;
+}
+
+message CPUsOpt {
+    int64 from  = 1;
+    int64 count = 2;
 }
 
 message GetNodeInfoResponse {
@@ -18,19 +29,24 @@ message GetNodeInfoResponse {
     int64   port    = 3;
 }
 
-message BuildRequest {
+message BuildTaskRequest {
     string  taskTitle    = 1 [(validate.rules).string.min_len = 1];
     bytes   imageArchive = 2 [(validate.rules).bytes.min_len = 3];
 }
 
-message BuildResponse {
+message BuildTaskResponse {
     string  taskId  = 1;
     string  imageId = 2;
     Node    node    = 3;
     string  status  = 4;
 }
 
-message Node {
-    string  host = 1;
-    int64   port = 2;
+message CreateTaskRequest {
+    string imageId   = 1;
+    CPUsOpt cpus_opt = 2;
+}
+
+message CreateTaskResponse {
+    string containerId  = 1;
+    string status       = 2;
 }
