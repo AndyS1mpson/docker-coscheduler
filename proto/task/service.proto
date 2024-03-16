@@ -16,6 +16,7 @@ service Task {
     rpc ResumeTask(ResumeTaskRequest) returns (google.protobuf.Empty) {}
     rpc StopTask(StopTaskRequest) returns (google.protobuf.Empty) {}
     rpc UpdateTaskResources(UpdateTaskResourcesRequest) returns (google.protobuf.Empty) {}
+    rpc GetContainerInfo(GetContainerInfoRequest) returns (GetContainerInfoResponse) {}
 }
 
 message Node {
@@ -74,5 +75,15 @@ message StopTaskRequest {
 
 message UpdateTaskResourcesRequest {
     string containerId = 1;
-    CPUsOpt cpus_opt = 2;
+    CPUsOpt cpus_opt   = 2;
+}
+
+message GetContainerInfoRequest {
+    string containerId = 1;
+}
+
+message GetContainerInfoResponse {
+    string id       = 1;
+    string state    = 2;
+    int64 exitCode  = 3;
 }

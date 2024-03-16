@@ -17,4 +17,5 @@ type externalClient interface {
 	ResumeTask(ctx context.Context, in *task.ResumeTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	StopTask(ctx context.Context, in *task.StopTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdateTaskResources(ctx context.Context, in *task.UpdateTaskResourcesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetContainerInfo(ctx context.Context, in *task.GetContainerInfoRequest, opts ...grpc.CallOption) (*task.GetContainerInfoResponse, error)
 }

@@ -1387,3 +1387,215 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateTaskResourcesRequestValidationError{}
+
+// Validate checks the field values on GetContainerInfoRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetContainerInfoRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetContainerInfoRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetContainerInfoRequestMultiError, or nil if none found.
+func (m *GetContainerInfoRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetContainerInfoRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ContainerId
+
+	if len(errors) > 0 {
+		return GetContainerInfoRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetContainerInfoRequestMultiError is an error wrapping multiple validation
+// errors returned by GetContainerInfoRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetContainerInfoRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetContainerInfoRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetContainerInfoRequestMultiError) AllErrors() []error { return m }
+
+// GetContainerInfoRequestValidationError is the validation error returned by
+// GetContainerInfoRequest.Validate if the designated constraints aren't met.
+type GetContainerInfoRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetContainerInfoRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetContainerInfoRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetContainerInfoRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetContainerInfoRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetContainerInfoRequestValidationError) ErrorName() string {
+	return "GetContainerInfoRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetContainerInfoRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetContainerInfoRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetContainerInfoRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetContainerInfoRequestValidationError{}
+
+// Validate checks the field values on GetContainerInfoResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetContainerInfoResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetContainerInfoResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetContainerInfoResponseMultiError, or nil if none found.
+func (m *GetContainerInfoResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetContainerInfoResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for State
+
+	// no validation rules for ExitCode
+
+	if len(errors) > 0 {
+		return GetContainerInfoResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetContainerInfoResponseMultiError is an error wrapping multiple validation
+// errors returned by GetContainerInfoResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetContainerInfoResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetContainerInfoResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetContainerInfoResponseMultiError) AllErrors() []error { return m }
+
+// GetContainerInfoResponseValidationError is the validation error returned by
+// GetContainerInfoResponse.Validate if the designated constraints aren't met.
+type GetContainerInfoResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetContainerInfoResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetContainerInfoResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetContainerInfoResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetContainerInfoResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetContainerInfoResponseValidationError) ErrorName() string {
+	return "GetContainerInfoResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetContainerInfoResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetContainerInfoResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetContainerInfoResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetContainerInfoResponseValidationError{}
