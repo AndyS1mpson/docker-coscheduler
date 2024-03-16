@@ -14,6 +14,7 @@ service Task {
     rpc StartTask(StartTaskRequest) returns (google.protobuf.Empty) {}
     rpc PauseTask(PauseTaskRequest) returns (google.protobuf.Empty) {}
     rpc ResumeTask(ResumeTaskRequest) returns (google.protobuf.Empty) {}
+    rpc StopTask(StopTaskRequest) returns (google.protobuf.Empty) {}
 }
 
 message Node {
@@ -63,5 +64,9 @@ message PauseTaskRequest {
 }
 
 message ResumeTaskRequest {
+    string containerId = 1;
+}
+
+message StopTaskRequest {
     string containerId = 1;
 }

@@ -13,4 +13,5 @@ type service interface {
 	StartTask(ctx context.Context, containerID string) error
 	PauseTask(ctx context.Context, containerID string) error
 	ResumeTask(ctx context.Context, containerID string) error
+	StopTask(ctx context.Context, containerID string) error
 }
