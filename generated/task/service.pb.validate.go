@@ -1254,3 +1254,136 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = StopTaskRequestValidationError{}
+
+// Validate checks the field values on UpdateTaskResourcesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateTaskResourcesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateTaskResourcesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateTaskResourcesRequestMultiError, or nil if none found.
+func (m *UpdateTaskResourcesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateTaskResourcesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ContainerId
+
+	if all {
+		switch v := interface{}(m.GetCpusOpt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateTaskResourcesRequestValidationError{
+					field:  "CpusOpt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateTaskResourcesRequestValidationError{
+					field:  "CpusOpt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCpusOpt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateTaskResourcesRequestValidationError{
+				field:  "CpusOpt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateTaskResourcesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateTaskResourcesRequestMultiError is an error wrapping multiple
+// validation errors returned by UpdateTaskResourcesRequest.ValidateAll() if
+// the designated constraints aren't met.
+type UpdateTaskResourcesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateTaskResourcesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateTaskResourcesRequestMultiError) AllErrors() []error { return m }
+
+// UpdateTaskResourcesRequestValidationError is the validation error returned
+// by UpdateTaskResourcesRequest.Validate if the designated constraints aren't met.
+type UpdateTaskResourcesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateTaskResourcesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateTaskResourcesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateTaskResourcesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateTaskResourcesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateTaskResourcesRequestValidationError) ErrorName() string {
+	return "UpdateTaskResourcesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateTaskResourcesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateTaskResourcesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateTaskResourcesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateTaskResourcesRequestValidationError{}

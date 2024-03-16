@@ -14,4 +14,5 @@ type service interface {
 	PauseTask(ctx context.Context, containerID string) error
 	ResumeTask(ctx context.Context, containerID string) error
 	StopTask(ctx context.Context, containerID string) error
+	UpdateTaskResources(ctx context.Context, containerID string, cpuSet models.CPUSet) error
 }

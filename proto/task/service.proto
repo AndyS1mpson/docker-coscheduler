@@ -15,6 +15,7 @@ service Task {
     rpc PauseTask(PauseTaskRequest) returns (google.protobuf.Empty) {}
     rpc ResumeTask(ResumeTaskRequest) returns (google.protobuf.Empty) {}
     rpc StopTask(StopTaskRequest) returns (google.protobuf.Empty) {}
+    rpc UpdateTaskResources(UpdateTaskResourcesRequest) returns (google.protobuf.Empty) {}
 }
 
 message Node {
@@ -69,4 +70,9 @@ message ResumeTaskRequest {
 
 message StopTaskRequest {
     string containerId = 1;
+}
+
+message UpdateTaskResourcesRequest {
+    string containerId = 1;
+    CPUsOpt cpus_opt = 2;
 }
