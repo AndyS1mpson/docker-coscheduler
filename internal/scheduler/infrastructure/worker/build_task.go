@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/AndyS1mpson/docker-coscheduler/generated/task"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
@@ -14,7 +15,7 @@ func (c *Client) Build(ctx context.Context, archive models.ImageArchive, taskTit
 		TaskTitle:    taskTitle,
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("build task on worker: %w", err)
 	}
 
 	return res.ImageId, nil

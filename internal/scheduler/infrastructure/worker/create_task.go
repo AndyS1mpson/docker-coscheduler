@@ -3,6 +3,7 @@ package worker
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/AndyS1mpson/docker-coscheduler/generated/task"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
@@ -19,7 +20,7 @@ func (c *Client) CreateTask(ctx context.Context, imageID string, cpuSet models.C
 		},
 	})
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("create task on worker: %w", err)
 	}
 
 	if res.Status != string(models.ContainerStateCreated) {

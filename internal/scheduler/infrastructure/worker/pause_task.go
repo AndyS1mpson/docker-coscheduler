@@ -2,6 +2,7 @@ package worker
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/AndyS1mpson/docker-coscheduler/generated/task"
 )
@@ -12,7 +13,7 @@ func (c *Client) PauseTask(ctx context.Context, containerID string) error {
 		ContainerId: containerID,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("pause task on worker: %w", err)
 	}
 
 	return nil
