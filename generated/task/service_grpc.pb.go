@@ -23,6 +23,7 @@ const (
 	Task_GetNodeInfo_FullMethodName = "/task.Task/GetNodeInfo"
 	Task_BuildTask_FullMethodName   = "/task.Task/BuildTask"
 	Task_CreateTask_FullMethodName  = "/task.Task/CreateTask"
+	Task_PauseTask_FullMethodName   = "/task.Task/PauseTask"
 )
 
 // TaskClient is the client API for Task service.
@@ -32,6 +33,7 @@ type TaskClient interface {
 	GetNodeInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
 	BuildTask(ctx context.Context, in *BuildTaskRequest, opts ...grpc.CallOption) (*BuildTaskResponse, error)
 	CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error)
+	PauseTask(ctx context.Context, in *PauseTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type taskClient struct {
@@ -69,6 +71,15 @@ func (c *taskClient) CreateTask(ctx context.Context, in *CreateTaskRequest, opts
 	return out, nil
 }
 
+func (c *taskClient) PauseTask(ctx context.Context, in *PauseTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Task_PauseTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility
@@ -76,6 +87,7 @@ type TaskServer interface {
 	GetNodeInfo(context.Context, *emptypb.Empty) (*GetNodeInfoResponse, error)
 	BuildTask(context.Context, *BuildTaskRequest) (*BuildTaskResponse, error)
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskResponse, error)
+	PauseTask(context.Context, *PauseTaskRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -91,6 +103,9 @@ func (UnimplementedTaskServer) BuildTask(context.Context, *BuildTaskRequest) (*B
 }
 func (UnimplementedTaskServer) CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTask not implemented")
+}
+func (UnimplementedTaskServer) PauseTask(context.Context, *PauseTaskRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PauseTask not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -159,6 +174,24 @@ func _Task_CreateTask_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_PauseTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PauseTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).PauseTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_PauseTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).PauseTask(ctx, req.(*PauseTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -177,6 +210,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateTask",
 			Handler:    _Task_CreateTask_Handler,
+		},
+		{
+			MethodName: "PauseTask",
+			Handler:    _Task_PauseTask_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

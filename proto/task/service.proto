@@ -11,6 +11,7 @@ service Task {
     rpc GetNodeInfo(google.protobuf.Empty) returns (GetNodeInfoResponse) {}
     rpc BuildTask(BuildTaskRequest) returns (BuildTaskResponse) {}
     rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse) {}
+    rpc PauseTask(PauseTaskRequest) returns (google.protobuf.Empty) {}
 }
 
 message Node {
@@ -49,4 +50,8 @@ message CreateTaskRequest {
 message CreateTaskResponse {
     string containerId  = 1;
     string status       = 2;
+}
+
+message PauseTaskRequest {
+    string containerId = 1;
 }
