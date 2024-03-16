@@ -3,8 +3,9 @@ package controllers
 import (
 	"context"
 
-	"github.com/AndyS1mpson/docker-coscheduler/generated/task"
 	"google.golang.org/protobuf/types/known/emptypb"
+
+	"github.com/AndyS1mpson/docker-coscheduler/generated/task"
 )
 
 // GetNodeInfo получение информации о ноде
