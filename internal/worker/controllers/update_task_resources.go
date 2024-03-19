@@ -12,7 +12,7 @@ import (
 // UpdateTaskResources обработчик обновления ресурсов, выделенных задаче
 func (s *Server) UpdateTaskResources(ctx context.Context, req *task.UpdateTaskResourcesRequest) (*emptypb.Empty, error) {
 	err := s.service.UpdateTaskResources(ctx, req.ContainerId, models.CPUSet{
-		From: req.CpusOpt.From,
+		From:  req.CpusOpt.From,
 		Count: req.CpusOpt.Count,
 	})
 	if err != nil {

@@ -8,7 +8,7 @@ import (
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 )
 
-// BuildTask обработчик создания образа для задачи 
+// BuildTask обработчик создания образа для задачи
 func (s *Server) BuildTask(ctx context.Context, req *task.BuildTaskRequest) (*task.BuildTaskResponse, error) {
 	err := req.Validate()
 	if err != nil {

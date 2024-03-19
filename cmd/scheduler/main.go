@@ -6,6 +6,7 @@ import (
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/container"
+	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/infrastructure/worker"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/log"
 )
 
@@ -42,32 +43,22 @@ func run() (exitCode int) {
 
 	defer shutdown()
 
-	taskArchiver := container.GetTaskHub()
-
-	archive, err := taskArchiver.ArchiveImageToTar("task1", "test_1")
-	if err != nil {
-		log.Error(err, log.Data{})
-
-		return failExitCode
+	tasks := []models.StrategyTask{
+		{
+			Name:       "task 1",
+			FolderName: "task1",
+		},
+		// {
+		// 	Name: "task 2",
+		// 	FolderName: "task1",
+		// },
 	}
 
 	extClient := container.GetWorkerClient(config.Nodes[0].Host, config.Nodes[0].Port)
 
-	imageID, err := extClient.Build(container.Ctx(), *archive, "test task")
-	if err != nil {
-		log.Error(err, log.Data{})
+	strategy := container.GetSequentialStrategy([]*worker.Client{extClient})
 
-		return failExitCode
-	}
-
-	containerID, err := extClient.CreateTask(container.Ctx(), imageID, models.CPUSet{From: 1, Count: 5})
-	if err != nil {
-		log.Error(err, log.Data{})
-
-		return failExitCode
-	}
-
-	log.Println(containerID, log.Data{})
+	strategy.Execute(container.Ctx(), tasks)
 
 	return successExitCode
 }

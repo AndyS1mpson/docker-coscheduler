@@ -5,8 +5,8 @@ import (
 
 	"github.com/docker/docker/client"
 
-	imageHub "github.com/AndyS1mpson/docker-coscheduler/internal/worker/infrastructure/image_hub"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/container"
+	imageHub "github.com/AndyS1mpson/docker-coscheduler/internal/worker/infrastructure/image_hub"
 )
 
 // getDockerExternalClient получение внешнего клиента для взаимодействия с docker api

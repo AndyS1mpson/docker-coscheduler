@@ -9,7 +9,7 @@ import (
 )
 
 // Build сборка образа таски
-func (c *Client) Build(ctx context.Context, archive models.ImageArchive, taskTitle string) (string, error) {
+func (c *Client) BuildTask(ctx context.Context, archive models.ImageArchive, taskTitle string) (string, error) {
 	res, err := c.externalClient.BuildTask(ctx, &task.BuildTaskRequest{
 		ImageArchive: archive.File,
 		TaskTitle:    taskTitle,

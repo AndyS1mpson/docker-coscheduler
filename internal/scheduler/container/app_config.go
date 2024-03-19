@@ -3,6 +3,7 @@ package container
 import (
 	"os"
 	"path/filepath"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
@@ -16,8 +17,9 @@ type NodeConfig struct {
 
 // AppConfig структура, содержащая конфигурации менеджеров
 type AppConfig struct {
-	TaskDir string       `yaml:"task_dir"`
-	Nodes   []NodeConfig `yaml:"nodes"`
+	TaskDir       string        `yaml:"task_dir"`
+	TaskInfoDelay time.Duration `yaml:"task_info_delay"`
+	Nodes         []NodeConfig  `yaml:"nodes"`
 }
 
 // NewConfig returns a new decoded Config struct

@@ -57,9 +57,6 @@ lint:
 install-linters:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
-precommit:
-	make precommit
-
 run-worker:
 	go run cmd/worker/main.go
 

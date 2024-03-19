@@ -8,9 +8,18 @@ import (
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 )
 
-// CreateTask обработчик создания контейнера с задачей 
+// CreateTask обработчик создания контейнера с задачей
 func (s *Server) CreateTask(ctx context.Context, req *task.CreateTaskRequest) (*task.CreateTaskResponse, error) {
-	createdTask, err := s.service.CreateTask(ctx, models.Task{ImageID: req.ImageId}, models.CPUSet{From: req.CpusOpt.From, Count: req.CpusOpt.Count})
+	var cpuOpts *models.CPUSet
+
+	if req.CpusOpt != nil {
+		cpuOpts = &models.CPUSet{
+			From:  req.CpusOpt.From,
+			Count: req.CpusOpt.Count,
+		}
+	}
+
+	createdTask, err := s.service.CreateTask(ctx, models.Task{ImageID: req.ImageId, Config: &models.Config{}}, cpuOpts)
 	if err != nil {
 		return nil, fmt.Errorf("create task: %w", err)
 	}

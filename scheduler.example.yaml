@@ -2,3 +2,4 @@ task_dir: "tasks"
 nodes:
   - host: "localhost"
     port: 8005
+task_info_delay: "10s"

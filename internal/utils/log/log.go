@@ -24,8 +24,8 @@ func Debug(err error, data Data) {
 }
 
 // Info логирует сообщение с уровнем info
-func Info(err error, data Data) {
-	global.WithFields(logrus.Fields(data)).Info(err)
+func Info(msg any, data Data) {
+	global.WithFields(logrus.Fields(data)).Info(msg)
 }
 
 // Error логирует сообщение с уровнем error

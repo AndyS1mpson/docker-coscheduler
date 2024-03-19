@@ -8,8 +8,8 @@ import (
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 )
 
-// GetContainerInfo получение информации о контейнере с воркера
-func (c *Client) GetContainerInfo(ctx context.Context, containerID string) (*models.ContainerInfo, error) {
+// GetTaskInfo получение информации о задаче с воркера
+func (c *Client) GetTaskInfo(ctx context.Context, containerID string) (*models.ContainerInfo, error) {
 	res, err := c.externalClient.GetContainerInfo(ctx, &task.GetContainerInfoRequest{
 		ContainerId: containerID,
 	})

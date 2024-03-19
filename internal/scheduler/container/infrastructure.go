@@ -11,16 +11,18 @@ import (
 
 // getDockerExternalClient получение внешнего клиента для взаимодействия с docker api
 func (c *Container) getDockerExternalClient() *client.Client {
-	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	if err != nil {
-		panic(fmt.Sprintf("init docker api engine client: %s", err))
-	}
+	return container.MustOrGetNew(c.Container, func() *client.Client {
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			panic(fmt.Sprintf("init docker api engine client: %s", err))
+		}
 
-	c.PushShutdown(func() {
-		cli.Close()
+		c.PushShutdown(func() {
+			cli.Close()
+		})
+
+		return cli
 	})
-
-	return cli
 }
 
 func (c *Container) GetTaskHub() *imageHub.Hub {
