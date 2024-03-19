@@ -48,7 +48,7 @@ func (s *SequentialStrategy[T]) Execute(ctx context.Context, tasks []models.Stra
 				select {
 				case task, ok := <-tasksRef:
 					if !ok {
-						break
+						return
 					}
 
 					err := s.executeTask(ctx, node, task)
