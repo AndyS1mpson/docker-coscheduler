@@ -15,13 +15,13 @@ import (
 // Как только задача на каком-либо узле завершает выполнение, на узле запускается следующая задача из списка.
 // Если список пуст, на узле ничего больше не запускается
 type SequentialStrategy[T nodeClient] struct {
-	nodes   []T
+	nodes   map[models.Node]T
 	taskHub taskHub
 	delay   time.Duration
 }
 
 // NewSequentialStrategy конструктор создания SequentialStrategy
-func NewSequentialStrategy[T nodeClient](nodes []T, taskHub taskHub, taskDelay time.Duration) *SequentialStrategy[T] {
+func NewSequentialStrategy[T nodeClient](nodes map[models.Node]T, taskHub taskHub, taskDelay time.Duration) *SequentialStrategy[T] {
 	return &SequentialStrategy[T]{
 		nodes:   nodes,
 		taskHub: taskHub,
@@ -30,7 +30,7 @@ func NewSequentialStrategy[T nodeClient](nodes []T, taskHub taskHub, taskDelay t
 }
 
 // Execute выполняет стратегию на указанных узлах с задачами
-func (s *SequentialStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) {
+func (s *SequentialStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) (*time.Duration, error) {
 	tasksRef := make(chan models.StrategyTask, len(tasks))
 
 	for _, task := range tasks {
@@ -40,6 +40,8 @@ func (s *SequentialStrategy[T]) Execute(ctx context.Context, tasks []models.Stra
 	var wg sync.WaitGroup
 
 	wg.Add(len(s.nodes))
+
+	start := time.Now()
 
 	for _, node := range s.nodes {
 		go func(node T) {
@@ -63,6 +65,10 @@ func (s *SequentialStrategy[T]) Execute(ctx context.Context, tasks []models.Stra
 	close(tasksRef)
 
 	wg.Wait()
+
+	duration := time.Since(start)
+
+	return &duration, nil
 }
 
 func (s *SequentialStrategy[T]) executeTask(ctx context.Context, node T, task models.StrategyTask) error {

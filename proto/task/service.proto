@@ -6,6 +6,7 @@ option go_package = "AndyS1mpson/docker-coscheduler/pkg/task";
 
 import "google/protobuf/empty.proto";
 import "validate/validate.proto";
+import "google/protobuf/duration.proto";
 
 service Task {
     rpc GetNodeInfo(google.protobuf.Empty) returns (GetNodeInfoResponse) {}
@@ -17,6 +18,7 @@ service Task {
     rpc StopTask(StopTaskRequest) returns (google.protobuf.Empty) {}
     rpc UpdateTaskResources(UpdateTaskResourcesRequest) returns (google.protobuf.Empty) {}
     rpc GetContainerInfo(GetContainerInfoRequest) returns (GetContainerInfoResponse) {}
+    rpc MeasureTaskSpeed(MeasureTaskSpeedRequest) returns (MeasureTaskSpeedResponse) {}
 }
 
 message Node {
@@ -86,4 +88,14 @@ message GetContainerInfoResponse {
     string id       = 1;
     string state    = 2;
     int64 exitCode  = 3;
+}
+
+message MeasureTaskSpeedRequest {
+    google.protobuf.Duration duration   = 1;
+    string containerId                  = 2;
+    CPUsOpt cpus_opt                    = 3;
+}
+
+message MeasureTaskSpeedResponse {
+    google.protobuf.Duration time = 1;
 }

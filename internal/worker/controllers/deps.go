@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"time"
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 )
@@ -16,4 +17,5 @@ type service interface {
 	StopTask(ctx context.Context, containerID string) error
 	UpdateTaskResources(ctx context.Context, containerID string, cpuSet models.CPUSet) error
 	GetContainerInfo(ctx context.Context, containerID string) (*models.ContainerInfo, error)
+	MeasureTaskSpeed(ctx context.Context, task models.Task, duration time.Duration) (time.Duration, error)
 }

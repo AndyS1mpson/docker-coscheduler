@@ -28,6 +28,7 @@ type imageAPI interface {
 // containerAPI API для взаимодейстия с docker контейнерами
 type containerAPI interface {
 	ContainerInspect(ctx context.Context, containerID string) (types.ContainerJSON, error)
+	ContainerStats(ctx context.Context, containerID string, stream bool) (types.ContainerStats, error)
 	ContainerCreate(
 		ctx context.Context,
 		config *container.Config,

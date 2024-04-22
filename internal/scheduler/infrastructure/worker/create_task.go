@@ -9,7 +9,7 @@ import (
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 )
 
-var containerNotCreatedErr = errors.New("task container not created")
+var errContainerNotCreated = errors.New("task container not created")
 
 func (c *Client) CreateTask(ctx context.Context, imageID string, cpuSet *models.CPUSet) (string, error) {
 	var taskResources *task.CPUsOpt
@@ -30,7 +30,7 @@ func (c *Client) CreateTask(ctx context.Context, imageID string, cpuSet *models.
 	}
 
 	if res.Status != string(models.ContainerStateCreated) {
-		return "", containerNotCreatedErr
+		return "", errContainerNotCreated
 	}
 
 	return res.ContainerId, nil

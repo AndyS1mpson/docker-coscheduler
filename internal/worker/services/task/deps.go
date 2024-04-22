@@ -2,6 +2,7 @@ package task
 
 import (
 	"context"
+	"time"
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 )
@@ -21,4 +22,8 @@ type dockerClient interface {
 
 type unpacker interface {
 	UnpackTarArchive(archiveFile models.ImageArchive, dirName string) error
+}
+
+type measurer interface {
+	Measure(ctx context.Context, task models.Task, duration time.Duration) (time.Duration, error)
 }

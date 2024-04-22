@@ -20,8 +20,6 @@ func main() {
 }
 
 func run() (exitCode int) {
-	var err error
-
 	config, err := container.NewConfig()
 	if err != nil {
 		log.Error(fmt.Errorf("read config: %w", err), log.Data{})
@@ -30,7 +28,6 @@ func run() (exitCode int) {
 	}
 
 	container, shutdown := container.NewContainer(*config)
-
 	defer func() {
 		if panicErr := recover(); panicErr != nil {
 			exitCode = failExitCode
@@ -43,22 +40,49 @@ func run() (exitCode int) {
 
 	defer shutdown()
 
-	tasks := []models.StrategyTask{
-		{
-			Name:       "task 1",
-			FolderName: "task1",
-		},
-		// {
-		// 	Name: "task 2",
-		// 	FolderName: "task1",
-		// },
+	tasks := make([]models.StrategyTask, 0, len(config.Tasks))
+
+	for _, task := range config.Tasks {
+		tasks = append(tasks, models.StrategyTask{
+			Name:       task.Name,
+			FolderName: task.FolderName,
+		})
 	}
 
-	extClient := container.GetWorkerClient(config.Nodes[0].Host, config.Nodes[0].Port)
+	nodeClients := make(map[models.Node]*worker.Client)
 
-	strategy := container.GetSequentialStrategy([]*worker.Client{extClient})
+	for _, node := range config.Nodes {
+		client := container.GetWorkerClient(node.Host, node.Port)
+		info, err := client.GetNodeInfo(container.Ctx())
+		if err != nil {
+			log.Error(err, log.Data{"host": node.Host, "port": node.Port})
 
-	strategy.Execute(container.Ctx(), tasks)
+			return failExitCode
+		}
+
+		nodeClients[*info] = client
+	}
+
+	// seqStrategy := container.GetSequentialStrategy(nodeClients)
+
+	fcsStrategy := container.GetFCSStrategy(nodeClients)
+
+	// seqDuration, err := seqStrategy.Execute(container.Ctx(), tasks)
+	// if err != nil {
+	// 	log.Error(fmt.Errorf("seq strategy: %w", err), log.Data{})
+
+	// 	return failExitCode
+	// }
+
+	fcsDuration, err := fcsStrategy.Execute(container.Ctx(), tasks)
+	if err != nil {
+		log.Error(fmt.Errorf("fcs strategy: %w", err), log.Data{})
+
+		return failExitCode
+	}
+
+	//log.Info(fmt.Sprintf("seq strategy execution total time: %v\n", seqDuration), log.Data{})
+	log.Info(fmt.Sprintf("fcs strategy execution total time: %v", fcsDuration), log.Data{})
 
 	return successExitCode
 }

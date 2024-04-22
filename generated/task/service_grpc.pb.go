@@ -29,6 +29,7 @@ const (
 	Task_StopTask_FullMethodName            = "/task.Task/StopTask"
 	Task_UpdateTaskResources_FullMethodName = "/task.Task/UpdateTaskResources"
 	Task_GetContainerInfo_FullMethodName    = "/task.Task/GetContainerInfo"
+	Task_MeasureTaskSpeed_FullMethodName    = "/task.Task/MeasureTaskSpeed"
 )
 
 // TaskClient is the client API for Task service.
@@ -44,6 +45,7 @@ type TaskClient interface {
 	StopTask(ctx context.Context, in *StopTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdateTaskResources(ctx context.Context, in *UpdateTaskResourcesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetContainerInfo(ctx context.Context, in *GetContainerInfoRequest, opts ...grpc.CallOption) (*GetContainerInfoResponse, error)
+	MeasureTaskSpeed(ctx context.Context, in *MeasureTaskSpeedRequest, opts ...grpc.CallOption) (*MeasureTaskSpeedResponse, error)
 }
 
 type taskClient struct {
@@ -135,6 +137,15 @@ func (c *taskClient) GetContainerInfo(ctx context.Context, in *GetContainerInfoR
 	return out, nil
 }
 
+func (c *taskClient) MeasureTaskSpeed(ctx context.Context, in *MeasureTaskSpeedRequest, opts ...grpc.CallOption) (*MeasureTaskSpeedResponse, error) {
+	out := new(MeasureTaskSpeedResponse)
+	err := c.cc.Invoke(ctx, Task_MeasureTaskSpeed_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServer is the server API for Task service.
 // All implementations must embed UnimplementedTaskServer
 // for forward compatibility
@@ -148,6 +159,7 @@ type TaskServer interface {
 	StopTask(context.Context, *StopTaskRequest) (*emptypb.Empty, error)
 	UpdateTaskResources(context.Context, *UpdateTaskResourcesRequest) (*emptypb.Empty, error)
 	GetContainerInfo(context.Context, *GetContainerInfoRequest) (*GetContainerInfoResponse, error)
+	MeasureTaskSpeed(context.Context, *MeasureTaskSpeedRequest) (*MeasureTaskSpeedResponse, error)
 	mustEmbedUnimplementedTaskServer()
 }
 
@@ -181,6 +193,9 @@ func (UnimplementedTaskServer) UpdateTaskResources(context.Context, *UpdateTaskR
 }
 func (UnimplementedTaskServer) GetContainerInfo(context.Context, *GetContainerInfoRequest) (*GetContainerInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetContainerInfo not implemented")
+}
+func (UnimplementedTaskServer) MeasureTaskSpeed(context.Context, *MeasureTaskSpeedRequest) (*MeasureTaskSpeedResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MeasureTaskSpeed not implemented")
 }
 func (UnimplementedTaskServer) mustEmbedUnimplementedTaskServer() {}
 
@@ -357,6 +372,24 @@ func _Task_GetContainerInfo_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Task_MeasureTaskSpeed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MeasureTaskSpeedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).MeasureTaskSpeed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_MeasureTaskSpeed_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).MeasureTaskSpeed(ctx, req.(*MeasureTaskSpeedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Task_ServiceDesc is the grpc.ServiceDesc for Task service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -399,6 +432,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetContainerInfo",
 			Handler:    _Task_GetContainerInfo_Handler,
+		},
+		{
+			MethodName: "MeasureTaskSpeed",
+			Handler:    _Task_MeasureTaskSpeed_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

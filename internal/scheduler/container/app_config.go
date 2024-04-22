@@ -11,15 +11,23 @@ import (
 var configFileName = "scheduler.yaml"
 
 type NodeConfig struct {
-	Host string `json:"host"`
-	Port int64  `json:"port"`
+	Host string `yaml:"host"`
+	Port int64  `yaml:"port"`
+}
+
+type TaskConfig struct {
+	Name       string `yaml:"name"`
+	FolderName string `yaml:"folder_name"`
 }
 
 // AppConfig структура, содержащая конфигурации менеджеров
 type AppConfig struct {
-	TaskDir       string        `yaml:"task_dir"`
-	TaskInfoDelay time.Duration `yaml:"task_info_delay"`
-	Nodes         []NodeConfig  `yaml:"nodes"`
+	TaskDir            string        `yaml:"task_dir"`
+	TaskInfoDelay      time.Duration `yaml:"task_info_delay"`
+	Nodes              []NodeConfig  `yaml:"nodes"`
+	Tasks              []TaskConfig  `yaml:"tasks"`
+	TaskCombinationNum int64         `yaml:"task_combination_num"`
+	MeasurementTime    time.Duration `yaml:"measurement_time"`
 }
 
 // NewConfig returns a new decoded Config struct

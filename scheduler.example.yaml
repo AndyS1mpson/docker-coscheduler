@@ -1,5 +1,12 @@
 task_dir: "tasks"
+task_combination_num: 1
+measurement_time: "1ms"
+task_info_delay: "1s"
 nodes:
   - host: "localhost"
     port: 8005
-task_info_delay: "10s"
+tasks:
+  - name: "Тестовая задача 1"
+    folder_name: "task1"
+  - name: "Тестовая задача 2"
+    folder_name: "task1"

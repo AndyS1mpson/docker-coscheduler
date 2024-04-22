@@ -3,6 +3,7 @@ package docker
 import (
 	"context"
 	"fmt"
+	"io"
 	"path/filepath"
 
 	"github.com/docker/docker/api/types"
@@ -31,6 +32,22 @@ func (c *Client) BuildImage(ctx context.Context, dirName string) (string, error)
 		return "", fmt.Errorf("failed to build image: %w", err)
 	}
 	defer res.Body.Close()
+
+	buildComplete := make(chan struct{})
+
+	// Горутина для ожидания завершения сборки образа
+	go func() {
+		defer close(buildComplete)
+
+		// Ждем завершения сборки
+		_, err := io.Copy(io.Discard, res.Body)
+		if err != nil {
+			fmt.Printf("failed to read image build response: %v\n", err)
+			return
+		}
+	}()
+
+	<-buildComplete
 
 	images, err := c.externalClient.ImageList(ctx, types.ImageListOptions{})
 	if err != nil {

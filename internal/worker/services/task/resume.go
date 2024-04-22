@@ -22,5 +22,5 @@ func (s *Service) ResumeTask(ctx context.Context, containerID string) error {
 		return fmt.Errorf("container is not paused")
 	}
 
-	return s.dockerClient.PauseContainer(ctx, containerID)
+	return s.dockerClient.UnpauseContainer(ctx, containerID)
 }

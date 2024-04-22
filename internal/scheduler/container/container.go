@@ -5,8 +5,6 @@ import (
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/dotenv"
 )
 
-var configPath = ""
-
 // Container DI-контейнер сервиса
 type Container struct {
 	configs AppConfig

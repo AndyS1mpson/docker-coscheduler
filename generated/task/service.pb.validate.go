@@ -1599,3 +1599,296 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetContainerInfoResponseValidationError{}
+
+// Validate checks the field values on MeasureTaskSpeedRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MeasureTaskSpeedRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MeasureTaskSpeedRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MeasureTaskSpeedRequestMultiError, or nil if none found.
+func (m *MeasureTaskSpeedRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MeasureTaskSpeedRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDuration()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, MeasureTaskSpeedRequestValidationError{
+					field:  "Duration",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, MeasureTaskSpeedRequestValidationError{
+					field:  "Duration",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDuration()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return MeasureTaskSpeedRequestValidationError{
+				field:  "Duration",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for ContainerId
+
+	if all {
+		switch v := interface{}(m.GetCpusOpt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, MeasureTaskSpeedRequestValidationError{
+					field:  "CpusOpt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, MeasureTaskSpeedRequestValidationError{
+					field:  "CpusOpt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCpusOpt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return MeasureTaskSpeedRequestValidationError{
+				field:  "CpusOpt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return MeasureTaskSpeedRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// MeasureTaskSpeedRequestMultiError is an error wrapping multiple validation
+// errors returned by MeasureTaskSpeedRequest.ValidateAll() if the designated
+// constraints aren't met.
+type MeasureTaskSpeedRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MeasureTaskSpeedRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MeasureTaskSpeedRequestMultiError) AllErrors() []error { return m }
+
+// MeasureTaskSpeedRequestValidationError is the validation error returned by
+// MeasureTaskSpeedRequest.Validate if the designated constraints aren't met.
+type MeasureTaskSpeedRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MeasureTaskSpeedRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MeasureTaskSpeedRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MeasureTaskSpeedRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MeasureTaskSpeedRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MeasureTaskSpeedRequestValidationError) ErrorName() string {
+	return "MeasureTaskSpeedRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MeasureTaskSpeedRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMeasureTaskSpeedRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MeasureTaskSpeedRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MeasureTaskSpeedRequestValidationError{}
+
+// Validate checks the field values on MeasureTaskSpeedResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MeasureTaskSpeedResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MeasureTaskSpeedResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MeasureTaskSpeedResponseMultiError, or nil if none found.
+func (m *MeasureTaskSpeedResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MeasureTaskSpeedResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, MeasureTaskSpeedResponseValidationError{
+					field:  "Time",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, MeasureTaskSpeedResponseValidationError{
+					field:  "Time",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return MeasureTaskSpeedResponseValidationError{
+				field:  "Time",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return MeasureTaskSpeedResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// MeasureTaskSpeedResponseMultiError is an error wrapping multiple validation
+// errors returned by MeasureTaskSpeedResponse.ValidateAll() if the designated
+// constraints aren't met.
+type MeasureTaskSpeedResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MeasureTaskSpeedResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MeasureTaskSpeedResponseMultiError) AllErrors() []error { return m }
+
+// MeasureTaskSpeedResponseValidationError is the validation error returned by
+// MeasureTaskSpeedResponse.Validate if the designated constraints aren't met.
+type MeasureTaskSpeedResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MeasureTaskSpeedResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MeasureTaskSpeedResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MeasureTaskSpeedResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MeasureTaskSpeedResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MeasureTaskSpeedResponseValidationError) ErrorName() string {
+	return "MeasureTaskSpeedResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MeasureTaskSpeedResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMeasureTaskSpeedResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MeasureTaskSpeedResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MeasureTaskSpeedResponseValidationError{}
