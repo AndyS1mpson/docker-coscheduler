@@ -34,14 +34,12 @@ func (t *TaskSpeedMeasurer) Measure(ctx context.Context, task models.Task, durat
 		return 0, fmt.Errorf("cpu time measure: %w", err)
 	}
 
-	// TODO: раскомментировать это
-	// ipc, err := measureIPC(duration, task.Config.CPUs.AsString())
-	// if err != nil {
-	// 	return 0, fmt.Errorf("ipc measure: %w", err)
-	// }
+	ipc, err := measureIPC(duration, task.Config.CPUs.AsString())
+	if err != nil {
+		return 0, fmt.Errorf("ipc measure: %w", err)
+	}
 
-	//return ipc * cpuTime, nil
-	return cpuTime, nil
+	return ipc * cpuTime, nil
 }
 
 // measureIPC измерение IPC с помощью утилиты perf
