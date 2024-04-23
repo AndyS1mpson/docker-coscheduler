@@ -5,6 +5,8 @@ task_info_delay: "1s"
 nodes:
   - host: "localhost"
     port: 8005
+  - host: "localhost"
+    port: 8010
 tasks:
   - name: "Тестовая задача 1"
     folder_name: "task1"

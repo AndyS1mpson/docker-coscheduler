@@ -3,26 +3,26 @@ package strategy
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/log"
+	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/slices"
+	"golang.org/x/sync/errgroup"
 )
 
-// SequentialStrategy представляет последовательную стратегию выполнения задач.
-// Последовательная стратегия - запуск всех задач по очереди монопольно на каждом узле.
+// RoundRobinStrategy представляет стратегию выполнения задач, в которой назначение задачи узлу идет по алгоритму round-robin.
 // Как только задача на каком-либо узле завершает выполнение, на узле запускается следующая задача из списка.
 // Если список пуст, на узле ничего больше не запускается
-type SequentialStrategy[T nodeClient] struct {
+type RoundRobinStrategy[T nodeClient] struct {
 	nodes   map[models.Node]T
 	taskHub taskHub
 	delay   time.Duration
 }
 
-// NewSequentialStrategy конструктор создания SequentialStrategy
-func NewSequentialStrategy[T nodeClient](nodes map[models.Node]T, taskHub taskHub, taskDelay time.Duration) *SequentialStrategy[T] {
-	return &SequentialStrategy[T]{
+// NewRoundRobinStrategy конструктор создания RoundRobinStrategy
+func NewRoundRobinStrategy[T nodeClient](nodes map[models.Node]T, taskHub taskHub, taskDelay time.Duration) *RoundRobinStrategy[T] {
+	return &RoundRobinStrategy[T]{
 		nodes:   nodes,
 		taskHub: taskHub,
 		delay:   taskDelay,
@@ -30,48 +30,47 @@ func NewSequentialStrategy[T nodeClient](nodes map[models.Node]T, taskHub taskHu
 }
 
 // Execute выполняет стратегию на указанных узлах с задачами
-func (s *SequentialStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) (*time.Duration, error) {
-	tasksRef := make(chan models.StrategyTask, len(tasks))
+func (s *RoundRobinStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) (*time.Duration, error) {
+	nodesInfo := slices.Keys(s.nodes)
 
-	for _, task := range tasks {
-		tasksRef <- task
+	// мапа, содержащая информацию о том, свободна ли нода или на ней выполняется задача
+	availableNodes := make(map[models.Node]chan struct{}, len(s.nodes))
+
+	for nodeInfo := range s.nodes {
+		availableNodes[nodeInfo] = make(chan struct{})
 	}
 
-	var wg sync.WaitGroup
+	defer func() {
+		for _, ch := range availableNodes {
+			close(ch)
+		}
+	}()
 
-	wg.Add(len(s.nodes))
+	g, ctx := errgroup.WithContext(ctx)
 
 	start := time.Now()
 
-	for _, node := range s.nodes {
-		go func(node T) {
-			defer wg.Done()
-			for {
-				select {
-				case task, ok := <-tasksRef:
-					if !ok {
-						return
-					}
+	for idx, task := range tasks {
+		g.Go(func() error {
+			info := nodesInfo[idx%len(s.nodes)]
+			availableNodes[info] <- struct{}{} // ждем пока нода занята выполнением задачи и занимаем ее
+			err := s.executeTask(ctx, s.nodes[info], task)
+			<-availableNodes[info] // освобождаем ноду
 
-					err := s.executeTask(ctx, node, task)
-					if err != nil {
-						log.Error(err, log.Data{})
-					}
-				}
-			}
-		}(node)
+			return err
+		})
 	}
 
-	close(tasksRef)
-
-	wg.Wait()
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
 
 	duration := time.Since(start)
 
 	return &duration, nil
 }
 
-func (s *SequentialStrategy[T]) executeTask(ctx context.Context, node T, task models.StrategyTask) error {
+func (s *RoundRobinStrategy[T]) executeTask(ctx context.Context, node T, task models.StrategyTask) error {
 	archive, err := s.taskHub.ArchiveImageToTar(task.FolderName, task.Name)
 	if err != nil {
 		return fmt.Errorf("archive task to tar: %w", err)
@@ -102,7 +101,7 @@ func (s *SequentialStrategy[T]) executeTask(ctx context.Context, node T, task mo
 	return nil
 }
 
-func (s *SequentialStrategy[T]) waitForTask(ctx context.Context, node T, taskID string) error {
+func (s *RoundRobinStrategy[T]) waitForTask(ctx context.Context, node T, taskID string) error {
 	isRunning := true
 
 	for isRunning {

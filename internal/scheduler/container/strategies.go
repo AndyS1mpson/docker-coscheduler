@@ -8,10 +8,10 @@ import (
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/container"
 )
 
-// GetSequentialStrategy последовательная стратегия планирования задач на узлах
-func (c *Container) GetSequentialStrategy(nodes map[models.Node]*worker.Client) *strategy.SequentialStrategy[*worker.Client] {
-	return container.MustOrGetNew(c.Container, func() *strategy.SequentialStrategy[*worker.Client] {
-		return strategy.NewSequentialStrategy[*worker.Client](nodes, c.GetTaskHub(), c.configs.TaskInfoDelay)
+// GetRoundRobinStrategy последовательная стратегия планирования задач на узлах
+func (c *Container) GetRoundRobinStrategy(nodes map[models.Node]*worker.Client) *strategy.RoundRobinStrategy[*worker.Client] {
+	return container.MustOrGetNew(c.Container, func() *strategy.RoundRobinStrategy[*worker.Client] {
+		return strategy.NewRoundRobinStrategy[*worker.Client](nodes, c.GetTaskHub(), c.configs.TaskInfoDelay)
 	})
 }
 

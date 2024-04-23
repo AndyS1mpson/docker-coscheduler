@@ -19,7 +19,3 @@ type nodeClient interface {
 type taskHub interface {
 	ArchiveImageToTar(imageDir string, tarName string) (*models.ImageArchive, error)
 }
-
-type strategy interface {
-	Execute(ctx context.Context, tasks []models.StrategyTask)
-}

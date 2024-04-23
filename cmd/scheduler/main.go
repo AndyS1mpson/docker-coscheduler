@@ -63,13 +63,13 @@ func run() (exitCode int) {
 		nodeClients[*info] = client
 	}
 
-	// seqStrategy := container.GetSequentialStrategy(nodeClients)
+	// rrStrategy := container.GetRoundRobinStrategy(nodeClients)
 
 	fcsStrategy := container.GetFCSStrategy(nodeClients)
 
-	// seqDuration, err := seqStrategy.Execute(container.Ctx(), tasks)
+	// rrDuration, err := rrStrategy.Execute(container.Ctx(), tasks)
 	// if err != nil {
-	// 	log.Error(fmt.Errorf("seq strategy: %w", err), log.Data{})
+	// 	log.Error(fmt.Errorf("round robin strategy: %w", err), log.Data{})
 
 	// 	return failExitCode
 	// }
@@ -81,7 +81,7 @@ func run() (exitCode int) {
 		return failExitCode
 	}
 
-	//log.Info(fmt.Sprintf("seq strategy execution total time: %v\n", seqDuration), log.Data{})
+	//log.Info(fmt.Sprintf("round robin strategy execution total time: %v\n", rrDuration), log.Data{})
 	log.Info(fmt.Sprintf("fcs strategy execution total time: %v", fcsDuration), log.Data{})
 
 	return successExitCode
