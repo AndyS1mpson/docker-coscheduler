@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/log"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/slices"
-	"golang.org/x/sync/errgroup"
 )
 
 // RoundRobinStrategy представляет стратегию выполнения задач, в которой назначение задачи узлу идет по алгоритму round-robin.
@@ -30,7 +31,7 @@ func NewRoundRobinStrategy[T nodeClient](nodes map[models.Node]T, taskHub taskHu
 }
 
 // Execute выполняет стратегию на указанных узлах с задачами
-func (s *RoundRobinStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) (*time.Duration, error) {
+func (s *RoundRobinStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) (time.Duration, error) {
 	nodesInfo := slices.Keys(s.nodes)
 
 	// мапа, содержащая информацию о том, свободна ли нода или на ней выполняется задача
@@ -62,12 +63,10 @@ func (s *RoundRobinStrategy[T]) Execute(ctx context.Context, tasks []models.Stra
 	}
 
 	if err := g.Wait(); err != nil {
-		return nil, err
+		return 0, err
 	}
 
-	duration := time.Since(start)
-
-	return &duration, nil
+	return time.Since(start), nil
 }
 
 func (s *RoundRobinStrategy[T]) executeTask(ctx context.Context, node T, task models.StrategyTask) error {
@@ -91,34 +90,12 @@ func (s *RoundRobinStrategy[T]) executeTask(ctx context.Context, node T, task mo
 		return fmt.Errorf("start task: %w", err)
 	}
 
-	err = s.waitForTask(ctx, node, taskID)
+	err = node.WaitForTask(ctx, taskID, s.delay)
 	if err != nil {
 		return err
 	}
 
 	log.Info(fmt.Sprintf("task %s executed", taskID), log.Data{})
-
-	return nil
-}
-
-func (s *RoundRobinStrategy[T]) waitForTask(ctx context.Context, node T, taskID string) error {
-	isRunning := true
-
-	for isRunning {
-		info, err := node.GetTaskInfo(ctx, taskID)
-		if err != nil {
-			return fmt.Errorf("get task info: %w", err)
-		}
-
-		if info.State == models.ContainerStateRunning {
-			time.Sleep(s.delay)
-			continue
-		} else if info.State == models.ContainerStateExited && info.ExitCode == 0 {
-			isRunning = false
-		} else {
-			return fmt.Errorf("task crashed with status: %w and exit code: %d", info.State, info.ExitCode)
-		}
-	}
 
 	return nil
 }

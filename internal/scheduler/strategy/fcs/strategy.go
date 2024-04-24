@@ -50,12 +50,12 @@ func NewFCSStrategy[T nodeClient](
 }
 
 // Execute выполняет задачи на узлах по FCS стратегии
-func (f *FCSStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) (*time.Duration, error) {
+func (f *FCSStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) (time.Duration, error) {
 	buildedTasks, err := f.buildTasksOnNodes(ctx, tasks)
 	if err != nil {
 		log.Error(err, log.Data{})
 
-		return nil, err
+		return 0, err
 	}
 
 	var totalTime time.Duration
@@ -64,13 +64,13 @@ func (f *FCSStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTas
 		nodeRunner := f.runners[nodeInfo]
 		duration, err := nodeRunner.Execute(ctx, tasks)
 		if err != nil {
-			return nil, err
+			return 0, err
 		}
 
 		totalTime += *duration
 	}
 
-	return &totalTime, nil
+	return totalTime, nil
 }
 
 // buildTasksOnNodes раскидывает задачи по нодам и билдит их

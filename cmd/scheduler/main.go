@@ -27,7 +27,7 @@ func run() (exitCode int) {
 		return failExitCode
 	}
 
-	container, shutdown := container.NewContainer(*config)
+	appContainer, shutdown := container.NewContainer(*config)
 	defer func() {
 		if panicErr := recover(); panicErr != nil {
 			exitCode = failExitCode
@@ -52,8 +52,8 @@ func run() (exitCode int) {
 	nodeClients := make(map[models.Node]*worker.Client)
 
 	for _, node := range config.Nodes {
-		client := container.GetWorkerClient(node.Host, node.Port)
-		info, err := client.GetNodeInfo(container.Ctx())
+		client := appContainer.GetWorkerClient(node.Host, node.Port)
+		info, err := client.GetNodeInfo(appContainer.Ctx())
 		if err != nil {
 			log.Error(err, log.Data{"host": node.Host, "port": node.Port})
 
@@ -63,26 +63,22 @@ func run() (exitCode int) {
 		nodeClients[*info] = client
 	}
 
-	// rrStrategy := container.GetRoundRobinStrategy(nodeClients)
-
-	fcsStrategy := container.GetFCSStrategy(nodeClients)
-
-	// rrDuration, err := rrStrategy.Execute(container.Ctx(), tasks)
-	// if err != nil {
-	// 	log.Error(fmt.Errorf("round robin strategy: %w", err), log.Data{})
-
-	// 	return failExitCode
-	// }
-
-	fcsDuration, err := fcsStrategy.Execute(container.Ctx(), tasks)
-	if err != nil {
-		log.Error(fmt.Errorf("fcs strategy: %w", err), log.Data{})
-
-		return failExitCode
+	strategies := map[string]container.Strategy{
+		"roundRobin": appContainer.GetRoundRobinStrategy(nodeClients),
+		"fcs":        appContainer.GetFCSStrategy(nodeClients),
+		"fcn":        appContainer.GetFCNStrategy(nodeClients),
 	}
 
-	//log.Info(fmt.Sprintf("round robin strategy execution total time: %v\n", rrDuration), log.Data{})
-	log.Info(fmt.Sprintf("fcs strategy execution total time: %v", fcsDuration), log.Data{})
+	for name, strategy := range strategies {
+		duration, err := strategy.Execute(appContainer.Ctx(), tasks)
+		if err != nil {
+			log.Error(fmt.Errorf("%s strategy: %w", name, err), log.Data{})
+
+			return failExitCode
+		}
+
+		log.Info(fmt.Sprintf("%s execution total time: %v", name, duration), log.Data{})
+	}
 
 	return successExitCode
 }

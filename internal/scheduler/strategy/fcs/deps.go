@@ -9,7 +9,7 @@ import (
 
 //go:generate mockgen -source=deps.go -destination=./mocks/mock.go
 
-// NodeClient представляет систему планирования задач
+// nodeClient представляет систему планирования задач
 type nodeClient interface {
 	BuildTask(ctx context.Context, archive models.ImageArchive, taskTitle string) (string, error)
 	CreateTask(ctx context.Context, imageID string, cpuSet *models.CPUSet) (string, error)
@@ -22,7 +22,7 @@ type nodeClient interface {
 		duration time.Duration,
 	) (time.Duration, error)
 	ResumeTask(ctx context.Context, containerID string) error
-	GetTaskInfo(ctx context.Context, containerID string) (*models.ContainerInfo, error)
+	WaitForTask(ctx context.Context, taskID string, delay time.Duration) error
 }
 
 type taskHub interface {

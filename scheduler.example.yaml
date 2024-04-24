@@ -1,5 +1,6 @@
 task_dir: "tasks"
 task_combination_num: 1
+fcn_task_num: 5
 measurement_time: "1ms"
 task_info_delay: "1s"
 nodes:

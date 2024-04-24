@@ -27,6 +27,7 @@ type AppConfig struct {
 	Nodes              []NodeConfig  `yaml:"nodes"`
 	Tasks              []TaskConfig  `yaml:"tasks"`
 	TaskCombinationNum int64         `yaml:"task_combination_num"`
+	FCNTaskNum         int64         `yaml:"fcn_task_num"`
 	MeasurementTime    time.Duration `yaml:"measurement_time"`
 }
 

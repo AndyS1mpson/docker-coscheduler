@@ -2,14 +2,14 @@ package fcs
 
 import (
 	"context"
-	"fmt"
 	"sort"
 	"time"
+
+	"golang.org/x/sync/errgroup"
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/services/combination"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/slices"
-	"golang.org/x/sync/errgroup"
 )
 
 // SingleNodeExecutor выполняет FCS стратегию на одной ноде и находит оптимальные комбинации
@@ -127,25 +127,7 @@ func (sn *SingleNodeFCSExecutor[T]) waitForTasks(ctx context.Context, taskIDs []
 
 	for _, taskID := range taskIDs {
 		g.Go(func() error {
-			isRunning := true
-
-			for isRunning {
-				info, err := sn.nodeClient.GetTaskInfo(ctx, taskID)
-				if err != nil {
-					return fmt.Errorf("get task info: %w", err)
-				}
-
-				if info.State == models.ContainerStateRunning {
-					time.Sleep(sn.delay)
-					continue
-				} else if info.State == models.ContainerStateExited && info.ExitCode == 0 {
-					isRunning = false
-				} else {
-					return fmt.Errorf("task crashed with status: %w and exit code: %d", info.State, info.ExitCode)
-				}
-			}
-
-			return nil
+			return sn.nodeClient.WaitForTask(ctx, taskID, sn.delay)
 		})
 	}
 
