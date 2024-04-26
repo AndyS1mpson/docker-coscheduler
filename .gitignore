@@ -25,3 +25,4 @@ go.work
 /.vscode
 scheduler.yaml
 worker.yaml
+.env

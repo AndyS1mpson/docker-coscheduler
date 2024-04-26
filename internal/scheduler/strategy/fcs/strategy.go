@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
@@ -19,6 +20,8 @@ import (
 // после чего на каждом узле запускаются всевозможные комбинации задач (количество задач в комбинации taskCombinationNum)
 // и происходит поиск множества самых "быстрых" комбинаций, которые в последствии и выполняются на узлах
 type FCSStrategy[T nodeClient] struct {
+	storage            storage
+	repository         repository
 	nodes              map[models.Node]T
 	runners            map[models.Node]SingleNodeFCSExecutor[T]
 	taskHub            taskHub
@@ -28,6 +31,8 @@ type FCSStrategy[T nodeClient] struct {
 
 // NewFCSStrategy конструктор создания FCSStrategy
 func NewFCSStrategy[T nodeClient](
+	storage storage,
+	repository repository,
 	nodes map[models.Node]T,
 	taskHub taskHub,
 	taskDelay time.Duration,
@@ -41,6 +46,8 @@ func NewFCSStrategy[T nodeClient](
 	}
 
 	return &FCSStrategy[T]{
+		storage:            storage,
+		repository:         repository,
 		nodes:              nodes,
 		runners:            runners,
 		taskHub:            taskHub,
@@ -50,7 +57,7 @@ func NewFCSStrategy[T nodeClient](
 }
 
 // Execute выполняет задачи на узлах по FCS стратегии
-func (f *FCSStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) (time.Duration, error) {
+func (f *FCSStrategy[T]) Execute(ctx context.Context, experimentID uuid.UUID, tasks []models.StrategyTask) (time.Duration, error) {
 	buildedTasks, err := f.buildTasksOnNodes(ctx, tasks)
 	if err != nil {
 		log.Error(err, log.Data{})
@@ -68,6 +75,11 @@ func (f *FCSStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTas
 		}
 
 		totalTime += *duration
+	}
+
+	err = f.saveExperimentResults(ctx, experimentID, tasks, totalTime)
+	if err != nil {
+		return 0, err
 	}
 
 	return totalTime, nil
@@ -133,4 +145,29 @@ func (f *FCSStrategy[T]) buildTask(ctx context.Context, task models.StrategyTask
 	buildedTask.Status = models.TaskStatusBuild
 
 	return &buildedTask, nil
+}
+
+func (f *FCSStrategy[T]) saveExperimentResults(
+	ctx context.Context,
+	experimentID uuid.UUID,
+	tasks []models.StrategyTask,
+	totalTime time.Duration,
+) error {
+	return f.storage.Tx(ctx, func(ctx context.Context, tx *sqlx.Tx) error {
+		id, err := f.repository.SaveExperimentResultTx(ctx, tx, models.ExperimentResult{
+			IdempotencyKey: experimentID.String(),
+			StrategyName:   models.StrategyNameFCS,
+			ExecutionTime:  totalTime,
+		})
+		if err != nil {
+			return fmt.Errorf("save experiment result: %w", err)
+		}
+
+		_, err = f.repository.SaveExperimentStrategyTasksTx(ctx, tx, id, tasks)
+		if err != nil {
+			return fmt.Errorf("save experiment tasks info: %w", err)
+		}
+
+		return nil
+	})
 }

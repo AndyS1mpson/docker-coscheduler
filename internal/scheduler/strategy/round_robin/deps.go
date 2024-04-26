@@ -1,8 +1,10 @@
-package strategy
+package round_robin
 
 import (
 	"context"
 	"time"
+
+	"github.com/jmoiron/sqlx"
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 )
@@ -19,4 +21,18 @@ type nodeClient interface {
 
 type taskHub interface {
 	ArchiveImageToTar(imageDir string, tarName string) (*models.ImageArchive, error)
+}
+
+type storage interface {
+	Tx(ctx context.Context, f func(context.Context, *sqlx.Tx) error) error
+}
+
+type repository interface {
+	SaveExperimentResultTx(ctx context.Context, q *sqlx.Tx, result models.ExperimentResult) (int64, error)
+	SaveExperimentStrategyTasksTx(
+		ctx context.Context,
+		q *sqlx.Tx,
+		experimentID int64,
+		tasks []models.StrategyTask,
+	) (int64, error)
 }

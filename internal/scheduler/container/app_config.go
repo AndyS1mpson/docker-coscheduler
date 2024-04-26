@@ -20,15 +20,24 @@ type TaskConfig struct {
 	FolderName string `yaml:"folder_name"`
 }
 
+type DatabaseConfig struct {
+	User     string `yaml:"user"`
+	DB       string `yaml:"db"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     int64  `yaml:"port"`
+}
+
 // AppConfig структура, содержащая конфигурации менеджеров
 type AppConfig struct {
-	TaskDir            string        `yaml:"task_dir"`
-	TaskInfoDelay      time.Duration `yaml:"task_info_delay"`
-	Nodes              []NodeConfig  `yaml:"nodes"`
-	Tasks              []TaskConfig  `yaml:"tasks"`
-	TaskCombinationNum int64         `yaml:"task_combination_num"`
-	FCNTaskNum         int64         `yaml:"fcn_task_num"`
-	MeasurementTime    time.Duration `yaml:"measurement_time"`
+	Database           DatabaseConfig `yaml:"database"`
+	TaskDir            string         `yaml:"task_dir"`
+	TaskInfoDelay      time.Duration  `yaml:"task_info_delay"`
+	Nodes              []NodeConfig   `yaml:"nodes"`
+	Tasks              []TaskConfig   `yaml:"tasks"`
+	TaskCombinationNum int64          `yaml:"task_combination_num"`
+	FCNTaskNum         int64          `yaml:"fcn_task_num"`
+	MeasurementTime    time.Duration  `yaml:"measurement_time"`
 }
 
 // NewConfig returns a new decoded Config struct

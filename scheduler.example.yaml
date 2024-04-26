@@ -3,13 +3,22 @@ task_combination_num: 1
 fcn_task_num: 5
 measurement_time: "1ms"
 task_info_delay: "1s"
+
 nodes:
   - host: "localhost"
     port: 8005
   - host: "localhost"
     port: 8010
+
 tasks:
   - name: "Тестовая задача 1"
     folder_name: "task1"
   - name: "Тестовая задача 2"
     folder_name: "task1"
+
+database:
+  - user: "postgres"
+  - db: "postgres"
+  - password: "postgres"
+  - host: "localhost"
+  - port: 5432

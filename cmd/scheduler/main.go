@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/google/uuid"
+
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/container"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/infrastructure/worker"
@@ -69,8 +71,10 @@ func run() (exitCode int) {
 		"fcn":        appContainer.GetFCNStrategy(nodeClients),
 	}
 
+	experimentID := uuid.New()
+
 	for name, strategy := range strategies {
-		duration, err := strategy.Execute(appContainer.Ctx(), tasks)
+		duration, err := strategy.Execute(appContainer.Ctx(), experimentID, tasks)
 		if err != nil {
 			log.Error(fmt.Errorf("%s strategy: %w", name, err), log.Data{})
 

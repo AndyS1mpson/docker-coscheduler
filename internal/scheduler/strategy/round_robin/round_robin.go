@@ -1,10 +1,12 @@
-package strategy
+package round_robin
 
 import (
 	"context"
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
@@ -16,29 +18,39 @@ import (
 // Как только задача на каком-либо узле завершает выполнение, на узле запускается следующая задача из списка.
 // Если список пуст, на узле ничего больше не запускается
 type RoundRobinStrategy[T nodeClient] struct {
-	nodes   map[models.Node]T
-	taskHub taskHub
-	delay   time.Duration
+	storage    storage
+	repository repository
+	nodes      map[models.Node]T
+	taskHub    taskHub
+	delay      time.Duration
 }
 
 // NewRoundRobinStrategy конструктор создания RoundRobinStrategy
-func NewRoundRobinStrategy[T nodeClient](nodes map[models.Node]T, taskHub taskHub, taskDelay time.Duration) *RoundRobinStrategy[T] {
+func NewRoundRobinStrategy[T nodeClient](
+	storage storage,
+	repository repository,
+	nodes map[models.Node]T,
+	taskHub taskHub,
+	taskDelay time.Duration,
+) *RoundRobinStrategy[T] {
 	return &RoundRobinStrategy[T]{
-		nodes:   nodes,
-		taskHub: taskHub,
-		delay:   taskDelay,
+		storage:    storage,
+		repository: repository,
+		nodes:      nodes,
+		taskHub:    taskHub,
+		delay:      taskDelay,
 	}
 }
 
 // Execute выполняет стратегию на указанных узлах с задачами
-func (s *RoundRobinStrategy[T]) Execute(ctx context.Context, tasks []models.StrategyTask) (time.Duration, error) {
+func (s *RoundRobinStrategy[T]) Execute(ctx context.Context, experimentID uuid.UUID, tasks []models.StrategyTask) (time.Duration, error) {
 	nodesInfo := slices.Keys(s.nodes)
 
 	// мапа, содержащая информацию о том, свободна ли нода или на ней выполняется задача
 	availableNodes := make(map[models.Node]chan struct{}, len(s.nodes))
 
 	for nodeInfo := range s.nodes {
-		availableNodes[nodeInfo] = make(chan struct{})
+		availableNodes[nodeInfo] = make(chan struct{}, 1)
 	}
 
 	defer func() {
@@ -47,7 +59,7 @@ func (s *RoundRobinStrategy[T]) Execute(ctx context.Context, tasks []models.Stra
 		}
 	}()
 
-	g, ctx := errgroup.WithContext(ctx)
+	g, groupCtx := errgroup.WithContext(ctx)
 
 	start := time.Now()
 
@@ -55,7 +67,7 @@ func (s *RoundRobinStrategy[T]) Execute(ctx context.Context, tasks []models.Stra
 		g.Go(func() error {
 			info := nodesInfo[idx%len(s.nodes)]
 			availableNodes[info] <- struct{}{} // ждем пока нода занята выполнением задачи и занимаем ее
-			err := s.executeTask(ctx, s.nodes[info], task)
+			err := s.executeTask(groupCtx, s.nodes[info], task)
 			<-availableNodes[info] // освобождаем ноду
 
 			return err
@@ -66,7 +78,14 @@ func (s *RoundRobinStrategy[T]) Execute(ctx context.Context, tasks []models.Stra
 		return 0, err
 	}
 
-	return time.Since(start), nil
+	end := time.Since(start)
+
+	err := s.saveExperimentResults(ctx, experimentID, tasks, end)
+	if err != nil {
+		return 0, err
+	}
+
+	return end, nil
 }
 
 func (s *RoundRobinStrategy[T]) executeTask(ctx context.Context, node T, task models.StrategyTask) error {
@@ -98,4 +117,29 @@ func (s *RoundRobinStrategy[T]) executeTask(ctx context.Context, node T, task mo
 	log.Info(fmt.Sprintf("task %s executed", taskID), log.Data{})
 
 	return nil
+}
+
+func (s *RoundRobinStrategy[T]) saveExperimentResults(
+	ctx context.Context,
+	experimentID uuid.UUID,
+	tasks []models.StrategyTask,
+	totalTime time.Duration,
+) error {
+	return s.storage.Tx(ctx, func(ctx context.Context, tx *sqlx.Tx) error {
+		id, err := s.repository.SaveExperimentResultTx(ctx, tx, models.ExperimentResult{
+			IdempotencyKey: experimentID.String(),
+			StrategyName:   models.StrategyNameRoundRobin,
+			ExecutionTime:  totalTime,
+		})
+		if err != nil {
+			return fmt.Errorf("save experiment result: %w", err)
+		}
+
+		_, err = s.repository.SaveExperimentStrategyTasksTx(ctx, tx, id, tasks)
+		if err != nil {
+			return fmt.Errorf("save experiment tasks info: %w", err)
+		}
+
+		return nil
+	})
 }
