@@ -16,6 +16,7 @@ func (c *Container) GetRoundRobinStrategy(nodes map[models.Node]*worker.Client) 
 		return roundRobin.NewRoundRobinStrategy[*worker.Client](
 			c.GetStorage(),
 			c.getRepository(),
+			c.getStrategiesCache(),
 			nodes, c.GetTaskHub(),
 			c.configs.TaskInfoDelay,
 		)
@@ -28,6 +29,7 @@ func (c *Container) GetFCSStrategy(nodes map[models.Node]*worker.Client) *fcs.FC
 		return fcs.NewFCSStrategy[*worker.Client](
 			c.GetStorage(),
 			c.getRepository(),
+			c.getStrategiesCache(),
 			nodes,
 			c.GetTaskHub(),
 			c.configs.TaskInfoDelay,
@@ -43,6 +45,7 @@ func (c *Container) GetFCNStrategy(nodes map[models.Node]*worker.Client) *fcn.FC
 		return fcn.NewFCNStrategy[*worker.Client](
 			c.GetStorage(),
 			c.getRepository(),
+			c.getStrategiesCache(),
 			nodes,
 			c.getNodeSpeedCache(slices.Keys(nodes)),
 			c.GetTaskHub(),

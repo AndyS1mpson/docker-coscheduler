@@ -6,6 +6,6 @@ import "time"
 type ExperimentResult struct {
 	ID             int64
 	IdempotencyKey string
-	StrategyName   StrategyName
+	StrategyID     int64
 	ExecutionTime  time.Duration
 }

@@ -20,8 +20,10 @@ import (
 // после чего на каждом узле запускаются всевозможные комбинации задач (количество задач в комбинации taskCombinationNum)
 // и происходит поиск множества самых "быстрых" комбинаций, которые в последствии и выполняются на узлах
 type FCSStrategy[T nodeClient] struct {
-	storage            storage
-	repository         repository
+	storage         storage
+	repository      repository
+	strategiesCache strategiesCache
+
 	nodes              map[models.Node]T
 	runners            map[models.Node]SingleNodeFCSExecutor[T]
 	taskHub            taskHub
@@ -33,6 +35,7 @@ type FCSStrategy[T nodeClient] struct {
 func NewFCSStrategy[T nodeClient](
 	storage storage,
 	repository repository,
+	strategiesCache strategiesCache,
 	nodes map[models.Node]T,
 	taskHub taskHub,
 	taskDelay time.Duration,
@@ -48,6 +51,7 @@ func NewFCSStrategy[T nodeClient](
 	return &FCSStrategy[T]{
 		storage:            storage,
 		repository:         repository,
+		strategiesCache:    strategiesCache,
 		nodes:              nodes,
 		runners:            runners,
 		taskHub:            taskHub,
@@ -154,9 +158,14 @@ func (f *FCSStrategy[T]) saveExperimentResults(
 	totalTime time.Duration,
 ) error {
 	return f.storage.Tx(ctx, func(ctx context.Context, tx *sqlx.Tx) error {
+		strategyID, err := f.getStrategyID(ctx, tx, models.StrategyNameRoundRobin)
+		if err != nil {
+			return fmt.Errorf("get strategy id: %w", err)
+		}
+
 		id, err := f.repository.SaveExperimentResultTx(ctx, tx, models.ExperimentResult{
 			IdempotencyKey: experimentID.String(),
-			StrategyName:   models.StrategyNameFCS,
+			StrategyID:     strategyID,
 			ExecutionTime:  totalTime,
 		})
 		if err != nil {
@@ -170,4 +179,15 @@ func (f *FCSStrategy[T]) saveExperimentResults(
 
 		return nil
 	})
+}
+
+// getStrategyID получает или создает стратегию для задачи в базе
+func (f *FCSStrategy[T]) getStrategyID(ctx context.Context, tx *sqlx.Tx, strategyName models.StrategyName) (int64, error) {
+	strategy := f.strategiesCache.GetByName(ctx, models.StrategyNameRoundRobin)
+
+	if strategy == nil {
+		return f.repository.CreateStrategy(ctx, models.Strategy{Name: strategyName})
+	}
+
+	return strategy.ID, nil
 }

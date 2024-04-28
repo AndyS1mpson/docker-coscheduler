@@ -17,8 +17,10 @@ import (
 // при которой приоритет в выполнении задачи отдается самому "мощному" вычислительному узлу из свободных.
 // При этом количество одновременно выполняющихся задач вычисляется пропорционально мощности ноды.
 type FCNStrategy[T nodeClient] struct {
-	storage             storage
-	repository          repository
+	storage         storage
+	repository      repository
+	strategiesCache strategiesCache
+
 	nodes               map[models.Node]T
 	cache               cache
 	taskHub             taskHub
@@ -31,6 +33,7 @@ type FCNStrategy[T nodeClient] struct {
 func NewFCNStrategy[T nodeClient](
 	storage storage,
 	repository repository,
+	strategiesCache strategiesCache,
 	nodes map[models.Node]T,
 	cache cache,
 	taskHub taskHub,
@@ -41,6 +44,7 @@ func NewFCNStrategy[T nodeClient](
 	return &FCNStrategy[T]{
 		storage:             storage,
 		repository:          repository,
+		strategiesCache:     strategiesCache,
 		nodes:               nodes,
 		cache:               cache,
 		taskHub:             taskHub,
@@ -148,9 +152,14 @@ func (f *FCNStrategy[T]) saveExperimentResults(
 	totalTime time.Duration,
 ) error {
 	return f.storage.Tx(ctx, func(ctx context.Context, tx *sqlx.Tx) error {
+		strategyID, err := f.getStrategyID(ctx, tx, models.StrategyNameRoundRobin)
+		if err != nil {
+			return fmt.Errorf("get strategy id: %w", err)
+		}
+
 		id, err := f.repository.SaveExperimentResultTx(ctx, tx, models.ExperimentResult{
 			IdempotencyKey: experimentID.String(),
-			StrategyName:   models.StrategyNameFCS,
+			StrategyID:     strategyID,
 			ExecutionTime:  totalTime,
 		})
 		if err != nil {
@@ -164,4 +173,15 @@ func (f *FCNStrategy[T]) saveExperimentResults(
 
 		return nil
 	})
+}
+
+// getStrategyID получает или создает стратегию для задачи в базе
+func (f *FCNStrategy[T]) getStrategyID(ctx context.Context, tx *sqlx.Tx, strategyName models.StrategyName) (int64, error) {
+	strategy := f.strategiesCache.GetByName(ctx, models.StrategyNameRoundRobin)
+
+	if strategy == nil {
+		return f.repository.CreateStrategy(ctx, models.Strategy{Name: strategyName})
+	}
+
+	return strategy.ID, nil
 }

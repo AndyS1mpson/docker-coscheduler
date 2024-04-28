@@ -15,8 +15,8 @@ var tableName = "experiment"
 // SaveExperimentResultTx сохранение результатов экспериментов в транзакции
 func (r *Repository) SaveExperimentResultTx(ctx context.Context, q *sqlx.Tx, result models.ExperimentResult) (int64, error) {
 	sql := sq.Insert(tableName).
-		Columns("idempotency_key", "strategy_name", "execution_time").
-		Values(result.IdempotencyKey, result.StrategyName, result.ExecutionTime).
+		Columns("idempotency_key", "strategy_id", "execution_time").
+		Values(result.IdempotencyKey, result.StrategyID, result.ExecutionTime).
 		Suffix("RETURNING id").
 		PlaceholderFormat(sq.Dollar)
 

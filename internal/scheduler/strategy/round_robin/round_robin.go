@@ -18,27 +18,31 @@ import (
 // Как только задача на каком-либо узле завершает выполнение, на узле запускается следующая задача из списка.
 // Если список пуст, на узле ничего больше не запускается
 type RoundRobinStrategy[T nodeClient] struct {
-	storage    storage
-	repository repository
-	nodes      map[models.Node]T
-	taskHub    taskHub
-	delay      time.Duration
+	storage         storage
+	repository      repository
+	strategiesCache strategiesCache
+
+	nodes   map[models.Node]T
+	taskHub taskHub
+	delay   time.Duration
 }
 
 // NewRoundRobinStrategy конструктор создания RoundRobinStrategy
 func NewRoundRobinStrategy[T nodeClient](
 	storage storage,
 	repository repository,
+	strategiesCache strategiesCache,
 	nodes map[models.Node]T,
 	taskHub taskHub,
 	taskDelay time.Duration,
 ) *RoundRobinStrategy[T] {
 	return &RoundRobinStrategy[T]{
-		storage:    storage,
-		repository: repository,
-		nodes:      nodes,
-		taskHub:    taskHub,
-		delay:      taskDelay,
+		storage:         storage,
+		repository:      repository,
+		strategiesCache: strategiesCache,
+		nodes:           nodes,
+		taskHub:         taskHub,
+		delay:           taskDelay,
 	}
 }
 
@@ -126,9 +130,14 @@ func (s *RoundRobinStrategy[T]) saveExperimentResults(
 	totalTime time.Duration,
 ) error {
 	return s.storage.Tx(ctx, func(ctx context.Context, tx *sqlx.Tx) error {
+		strategyID, err := s.getStrategyID(ctx, tx, models.StrategyNameRoundRobin)
+		if err != nil {
+			return fmt.Errorf("get strategy id: %w", err)
+		}
+
 		id, err := s.repository.SaveExperimentResultTx(ctx, tx, models.ExperimentResult{
 			IdempotencyKey: experimentID.String(),
-			StrategyName:   models.StrategyNameRoundRobin,
+			StrategyID:     strategyID,
 			ExecutionTime:  totalTime,
 		})
 		if err != nil {
@@ -142,4 +151,15 @@ func (s *RoundRobinStrategy[T]) saveExperimentResults(
 
 		return nil
 	})
+}
+
+// getStrategyID получает или создает стратегию для задачи в базе
+func (s *RoundRobinStrategy[T]) getStrategyID(ctx context.Context, tx *sqlx.Tx, strategyName models.StrategyName) (int64, error) {
+	strategy := s.strategiesCache.GetByName(ctx, models.StrategyNameRoundRobin)
+
+	if strategy == nil {
+		return s.repository.CreateStrategy(ctx, models.Strategy{Name: strategyName})
+	}
+
+	return strategy.ID, nil
 }

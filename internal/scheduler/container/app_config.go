@@ -30,14 +30,16 @@ type DatabaseConfig struct {
 
 // AppConfig структура, содержащая конфигурации менеджеров
 type AppConfig struct {
-	Database           DatabaseConfig `yaml:"database"`
-	TaskDir            string         `yaml:"task_dir"`
-	TaskInfoDelay      time.Duration  `yaml:"task_info_delay"`
-	Nodes              []NodeConfig   `yaml:"nodes"`
-	Tasks              []TaskConfig   `yaml:"tasks"`
-	TaskCombinationNum int64          `yaml:"task_combination_num"`
-	FCNTaskNum         int64          `yaml:"fcn_task_num"`
-	MeasurementTime    time.Duration  `yaml:"measurement_time"`
+	Database                   DatabaseConfig `yaml:"database"`
+	TaskDir                    string         `yaml:"task_dir"`
+	TaskInfoDelay              time.Duration  `yaml:"task_info_delay"`
+	Nodes                      []NodeConfig   `yaml:"nodes"`
+	Tasks                      []TaskConfig   `yaml:"tasks"`
+	TaskCombinationNum         int64          `yaml:"task_combination_num"`
+	FCNTaskNum                 int64          `yaml:"fcn_task_num"`
+	MeasurementTime            time.Duration  `yaml:"measurement_time"`
+	StrategyLoadingBatchSize   int64          `yaml:"strategy_loading_batch_size"`
+	CacheLoadingReloadInterval time.Duration  `yaml:"cache_loading_reload_interval"`
 }
 
 // NewConfig returns a new decoded Config struct

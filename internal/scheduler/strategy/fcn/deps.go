@@ -45,4 +45,10 @@ type repository interface {
 		experimentID int64,
 		tasks []models.StrategyTask,
 	) (int64, error)
+	CreateStrategy(ctx context.Context, strategy models.Strategy) (int64, error)
 }
+
+type strategiesCache interface {
+	GetByName(ctx context.Context, name models.StrategyName) *models.Strategy
+}
+

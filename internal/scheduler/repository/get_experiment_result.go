@@ -45,7 +45,7 @@ func (r *Repository) GetExperimentResults(ctx context.Context, q *sqlx.Tx, crite
 		experiments = append(experiments, models.ExperimentResult{
 			ID:             entity.ID,
 			IdempotencyKey: entity.IdempotencyKey,
-			StrategyName:   models.StrategyName(entity.StrategyName),
+			StrategyID:     entity.StrategyID,
 			ExecutionTime:  entity.ExecutionTime,
 		})
 	}
