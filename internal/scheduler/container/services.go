@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
+	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/infrastructure/worker"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/repository"
-	nodeTasksSpeedCache "github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/services/node/cache"
+	nodeResourcesCache "github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/services/node/cache/resources"
+	nodeTasksSpeedCache "github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/services/node/cache/task_speed"
 	strategiesCache "github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/services/strategy/cache"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/container"
 )
@@ -31,6 +33,16 @@ func (c *Container) getStrategiesCache() *strategiesCache.Cache {
 		if err := cache.Load(c.Ctx()); err != nil {
 			panic(fmt.Errorf("load strategies: %w", err))
 		}
+
+		cache.StartLoading(c.Ctx())
+
+		return cache
+	})
+}
+
+func (c *Container) getNodeResourcesCache(nodes map[models.Node]*worker.Client) *nodeResourcesCache.Cache[*worker.Client] {
+	return container.MustOrGetNew(c.Container, func() *nodeResourcesCache.Cache[*worker.Client] {
+		cache := nodeResourcesCache.NewCache(nodes, c.configs.NodeResourcesRequestReloadInterval)
 
 		cache.StartLoading(c.Ctx())
 

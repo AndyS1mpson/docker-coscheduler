@@ -10,6 +10,7 @@ import "google/protobuf/duration.proto";
 
 service Task {
     rpc GetNodeInfo(google.protobuf.Empty) returns (GetNodeInfoResponse) {}
+    rpc GetNodeResources(google.protobuf.Empty) returns (GetNodeResourcesResponse) {}
     rpc BuildTask(BuildTaskRequest) returns (BuildTaskResponse) {}
     rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse) {}
     rpc StartTask(StartTaskRequest) returns (google.protobuf.Empty) {}
@@ -35,6 +36,11 @@ message GetNodeInfoResponse {
     int64   cpuNums = 1;
     string  uri     = 2;
     int64   port    = 3;
+}
+
+message GetNodeResourcesResponse {
+    double cpu      = 1;
+    double memory   = 2;
 }
 
 message BuildTaskRequest {

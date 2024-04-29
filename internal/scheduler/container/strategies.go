@@ -5,6 +5,7 @@ import (
 	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/infrastructure/worker"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/strategy/fcn"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/strategy/fcs"
+	"github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/strategy/lln"
 	roundRobin "github.com/AndyS1mpson/docker-coscheduler/internal/scheduler/strategy/round_robin"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/container"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/slices"
@@ -52,6 +53,23 @@ func (c *Container) GetFCNStrategy(nodes map[models.Node]*worker.Client) *fcn.FC
 			c.configs.FCNTaskNum,
 			c.configs.TaskInfoDelay,
 			c.configs.MeasurementTime,
+		)
+	})
+}
+
+// GetLLNStrategy LLN стратегия планирования задач на узлах
+func (c *Container) GetLLNStrategy(nodes map[models.Node]*worker.Client) *lln.LeastLoadedNode[*worker.Client] {
+	return container.MustOrGetNew(c.Container, func() *lln.LeastLoadedNode[*worker.Client] {
+		return lln.NewLeastLoadedNode[*worker.Client](
+			c.GetStorage(),
+			c.getRepository(),
+			c.getNodeResourcesCache(nodes),
+			c.getStrategiesCache(),
+			nodes,
+			c.GetTaskHub(),
+			c.configs.TaskInfoDelay,
+			nil,
+			nil,
 		)
 	})
 }

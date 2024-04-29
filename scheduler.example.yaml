@@ -24,3 +24,4 @@ database:
   - port: 5432
 strategy_loading_batch_size: 10
 cache_loading_reload_interval: 5m
+node_resources_request_reload_interval: 5s

@@ -11,6 +11,7 @@ import (
 
 type externalClient interface {
 	GetNodeInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*task.GetNodeInfoResponse, error)
+	GetNodeResources(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*task.GetNodeResourcesResponse, error)
 	BuildTask(ctx context.Context, in *task.BuildTaskRequest, opts ...grpc.CallOption) (*task.BuildTaskResponse, error)
 	CreateTask(ctx context.Context, in *task.CreateTaskRequest, opts ...grpc.CallOption) (*task.CreateTaskResponse, error)
 	StartTask(ctx context.Context, in *task.StartTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)

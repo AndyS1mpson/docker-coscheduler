@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS strategy (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL CONSTRAINT strategy_name_len CHECK (char_length(strategy_name) <= 15)
 );
-
 CREATE TABLE IF NOT EXISTS experiment (
     id BIGSERIAL PRIMARY KEY,
     idempotency_key UUID NOT NULL,
@@ -19,9 +18,11 @@ CREATE TABLE IF NOT EXISTS strategy_task (
     task_path TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS experiment_id_idx ON strategy_task (experiment_id);
-
 INSERT INTO strategy (name)
-VALUES ("round_robin"), ("fcs"), ("fcn");
+VALUES ("round_robin"),
+    ("fcs"),
+    ("fcn"),
+    ("lln");
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin

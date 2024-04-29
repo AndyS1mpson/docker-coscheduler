@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	Task_GetNodeInfo_FullMethodName         = "/task.Task/GetNodeInfo"
+	Task_GetNodeResources_FullMethodName    = "/task.Task/GetNodeResources"
 	Task_BuildTask_FullMethodName           = "/task.Task/BuildTask"
 	Task_CreateTask_FullMethodName          = "/task.Task/CreateTask"
 	Task_StartTask_FullMethodName           = "/task.Task/StartTask"
@@ -37,6 +38,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TaskClient interface {
 	GetNodeInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
+	GetNodeResources(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetNodeResourcesResponse, error)
 	BuildTask(ctx context.Context, in *BuildTaskRequest, opts ...grpc.CallOption) (*BuildTaskResponse, error)
 	CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error)
 	StartTask(ctx context.Context, in *StartTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -59,6 +61,15 @@ func NewTaskClient(cc grpc.ClientConnInterface) TaskClient {
 func (c *taskClient) GetNodeInfo(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetNodeInfoResponse, error) {
 	out := new(GetNodeInfoResponse)
 	err := c.cc.Invoke(ctx, Task_GetNodeInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *taskClient) GetNodeResources(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetNodeResourcesResponse, error) {
+	out := new(GetNodeResourcesResponse)
+	err := c.cc.Invoke(ctx, Task_GetNodeResources_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -151,6 +162,7 @@ func (c *taskClient) MeasureTaskSpeed(ctx context.Context, in *MeasureTaskSpeedR
 // for forward compatibility
 type TaskServer interface {
 	GetNodeInfo(context.Context, *emptypb.Empty) (*GetNodeInfoResponse, error)
+	GetNodeResources(context.Context, *emptypb.Empty) (*GetNodeResourcesResponse, error)
 	BuildTask(context.Context, *BuildTaskRequest) (*BuildTaskResponse, error)
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskResponse, error)
 	StartTask(context.Context, *StartTaskRequest) (*emptypb.Empty, error)
@@ -169,6 +181,9 @@ type UnimplementedTaskServer struct {
 
 func (UnimplementedTaskServer) GetNodeInfo(context.Context, *emptypb.Empty) (*GetNodeInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNodeInfo not implemented")
+}
+func (UnimplementedTaskServer) GetNodeResources(context.Context, *emptypb.Empty) (*GetNodeResourcesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNodeResources not implemented")
 }
 func (UnimplementedTaskServer) BuildTask(context.Context, *BuildTaskRequest) (*BuildTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuildTask not implemented")
@@ -224,6 +239,24 @@ func _Task_GetNodeInfo_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TaskServer).GetNodeInfo(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Task_GetNodeResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServer).GetNodeResources(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Task_GetNodeResources_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServer).GetNodeResources(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -400,6 +433,10 @@ var Task_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNodeInfo",
 			Handler:    _Task_GetNodeInfo_Handler,
+		},
+		{
+			MethodName: "GetNodeResources",
+			Handler:    _Task_GetNodeResources_Handler,
 		},
 		{
 			MethodName: "BuildTask",

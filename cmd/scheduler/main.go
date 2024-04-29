@@ -69,6 +69,7 @@ func run() (exitCode int) {
 		"roundRobin": appContainer.GetRoundRobinStrategy(nodeClients),
 		"fcs":        appContainer.GetFCSStrategy(nodeClients),
 		"fcn":        appContainer.GetFCNStrategy(nodeClients),
+		"lln":        appContainer.GetLLNStrategy(nodeClients),
 	}
 
 	experimentID := uuid.New()
