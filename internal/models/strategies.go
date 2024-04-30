@@ -4,6 +4,7 @@ var (
 	StrategyNameRoundRobin StrategyName = "round-robin"
 	StrategyNameFCS        StrategyName = "fcs"
 	StrategyNameFCN        StrategyName = "fcn"
+	StrategyNameLLN        StrategyName = "lln"
 )
 
 // StrategyName название стратегии кошедулинга

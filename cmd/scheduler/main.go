@@ -65,11 +65,11 @@ func run() (exitCode int) {
 		nodeClients[*info] = client
 	}
 
-	strategies := map[string]container.Strategy{
-		"roundRobin": appContainer.GetRoundRobinStrategy(nodeClients),
-		"fcs":        appContainer.GetFCSStrategy(nodeClients),
-		"fcn":        appContainer.GetFCNStrategy(nodeClients),
-		"lln":        appContainer.GetLLNStrategy(nodeClients),
+	strategies := map[models.StrategyName]container.Strategy{
+		models.StrategyNameRoundRobin: appContainer.GetRoundRobinStrategy(nodeClients),
+		models.StrategyNameFCS:        appContainer.GetFCSStrategy(nodeClients),
+		models.StrategyNameFCN:        appContainer.GetFCNStrategy(nodeClients),
+		models.StrategyNameLLN:        appContainer.GetLLNStrategy(nodeClients),
 	}
 
 	experimentID := uuid.New()

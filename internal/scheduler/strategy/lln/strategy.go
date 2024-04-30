@@ -128,7 +128,7 @@ func (l *LeastLoadedNode[T]) saveExperimentResults(
 	totalTime time.Duration,
 ) error {
 	return l.storage.Tx(ctx, func(ctx context.Context, tx *sqlx.Tx) error {
-		strategyID, err := l.getStrategyID(ctx, tx, models.StrategyNameRoundRobin)
+		strategyID, err := l.getStrategyID(ctx, tx, models.StrategyNameLLN)
 		if err != nil {
 			return fmt.Errorf("get strategy id: %w", err)
 		}
