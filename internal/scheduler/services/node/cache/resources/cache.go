@@ -8,6 +8,7 @@ import (
 
 	"github.com/AndyS1mpson/docker-coscheduler/internal/models"
 	"github.com/AndyS1mpson/docker-coscheduler/internal/utils/log"
+	"golang.org/x/sync/errgroup"
 )
 
 // Cache кэш, хранящий состояние загруженности нод
@@ -48,13 +49,23 @@ func (c *Cache[T]) StartLoading(ctx context.Context) {
 func (c *Cache[T]) Load(ctx context.Context) error {
 	resources := make(map[models.Node]models.NodeResources, len(c.nodes))
 
-	for node, client := range c.nodes {
-		info, err := client.GetNodeResources(ctx)
-		if err != nil {
-			return err
-		}
+	g, ctx := errgroup.WithContext(ctx)
 
-		resources[node] = *info
+	for node, client := range c.nodes {
+		g.Go(func() error {
+			info, err := client.GetNodeResources(ctx)
+			if err != nil {
+				return err
+			}
+	
+			resources[node] = *info
+
+			return nil
+		})
+	}
+
+	if err := g.Wait(); err != nil {
+		return err
 	}
 
 	c.mu.Lock()

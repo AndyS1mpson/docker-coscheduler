@@ -8,7 +8,7 @@ import "google/protobuf/empty.proto";
 import "validate/validate.proto";
 import "google/protobuf/duration.proto";
 
-service Task {
+service Worker {
     rpc GetNodeInfo(google.protobuf.Empty) returns (GetNodeInfoResponse) {}
     rpc GetNodeResources(google.protobuf.Empty) returns (GetNodeResourcesResponse) {}
     rpc BuildTask(BuildTaskRequest) returns (BuildTaskResponse) {}
