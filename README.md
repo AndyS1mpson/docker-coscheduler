@@ -1,40 +1,40 @@
 # Docker coscheduler
-Реализация стратегий кошедулинга вычислительных задач, используя подход blackbox для задач, который реализован с помощью Docker
+Implementation of computational task co-scheduling strategies using the blackbox approach for tasks, which is implemented using Docker
 
-# Описание системы
-Планировщик состоит из 2 основных компонент:
-* Воркер - программная реализация процессов, которые запускаются на нодах и отвечают за выполнение задач
-* Сам планировщик - запускается на main-узле и реализует стратегии кошедулинга
-
-# Необходимые инструменты для запуска системы
-* На всех нодах системы должен быть установлен и запущен Docker Daemon;
-* На нодах должна быть установлена консольная утилита perf
+# Description of the system
+The co-scheduler consists of 2 main components:
+* Worker - the software implementation of processes that run on nodes and are responsible for completing tasks
+* The scheduler itself - runs on the main node and implements cost-management strategies
+  
+# Necessary tools to run the system
+* Docker Daemon must be installed and running on all nodes of the system.;
+* The perf console utility must be installed on the nodes.
 
 # Запуск проекта
-1. Для запуска проекта необходимо в корне репозитория создать `scheduler.yaml` и `worker.yaml` файлы, пример можно взять из `worker.example.yaml` или `scheduler.example.yaml`.
-2. В папке deployments необходимо создать `.env` файл (пример можно взять из `env.example`).
-3. Далее необходимо сгенерировать необходимые proto модули в проекте:
+1. To start a project, you need to create `scheduler.yaml` and `worker.yaml` files in the root of the repository, an example can be taken from `worker.example.yaml` or `scheduler.example.yaml`.
+2. In the deployments folder, you need to create a `.env` file (an example can be taken from `env.example`).
+3. Next, you need to generate the necessary proto modules in the project.:
 > make generate
-4. Необходимо поднять базу данных командой:
+4. It is necessary to up the database with the command:
 > make run-database
-5. В терминале импортировать соответствующую переменную окружения:
-> export POSTGRES_URL="postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"  # пример connection string для базы данных  
-6. Выполнить миграции:
+5. Import the corresponding environment variable in the terminal:
+> export POSTGRES_URL="postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"  # db connection string example  
+6. Do migrations:
 > make migrate
-7. После этого можно запустить проект:
-* Воркер:
+7. Run the project:
+* Worker:
 > make run-worker
-* Планировщик:
+* Scheduler:
 > make run-main
 
-# Создание миграция
-1. Чтобы выполнить миграцию баз данных, необходимо установить библиотеку goose:
+# Migrate creation
+1. To perform database migration, you need to install the goose library.:
 > go install github.com/pressly/goose/v3/cmd/goose@latest
 
-2. Перейти в папку migration соответствующего микросервиса и выполнить команду:
+2. Go to the migration folder of the corresponding microservice and run the command:
 > goose create \*имя миграции\* sql
 
-3. В терминале импортировать соответствующую переменную окружения:
-> POSTGRES_URL  # connection string для базы данных  
-4. выполнить комманду:
+3. Import the corresponding environment variable in the terminal:
+> POSTGRES_URL  # db connection string  
+4. Make command:
 > make migrate
