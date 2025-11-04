@@ -10,7 +10,7 @@ The co-scheduler consists of 2 main components:
 * Docker Daemon must be installed and running on all nodes of the system.;
 * The perf console utility must be installed on the nodes.
 
-# Запуск проекта
+# How to run
 1. To start a project, you need to create `scheduler.yaml` and `worker.yaml` files in the root of the repository, an example can be taken from `worker.example.yaml` or `scheduler.example.yaml`.
 2. In the deployments folder, you need to create a `.env` file (an example can be taken from `env.example`).
 3. Next, you need to generate the necessary proto modules in the project.:
