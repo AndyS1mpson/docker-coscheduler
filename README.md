@@ -1,5 +1,7 @@
 # Docker coscheduler
-Implementation of computational task co-scheduling strategies using the blackbox approach for tasks, which is implemented using Docker
+Implementation of a computing task co-scheduler system (with other strategies) on a computing cluster, the main idea of which is to manage idle computer resources and reassign tasks between cluster nodes for greater efficiency. 
+
+Using the blackbox approach for tasks, which is implemented using Docker.
 
 # Description of the system
 The co-scheduler consists of 2 main components:
